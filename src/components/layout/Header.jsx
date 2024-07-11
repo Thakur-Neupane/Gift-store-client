@@ -10,7 +10,7 @@ export const Header = () => {
   const dispatch = useDispatch();
 
   return (
-    <Navbar expand="md" className="bg-dark " data-bs-theme="dark">
+    <Navbar expand="md" className="bg-info zindex=-1" data-bs-theme="secondary">
       <Container>
         <Navbar.Brand href="#home"> </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

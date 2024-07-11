@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import bgImage from "../../assets/login.png";
+
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 
 const Login = () => {

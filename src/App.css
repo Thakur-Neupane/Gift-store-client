@@ -2,3 +2,40 @@
   right: 0;
   left: auto !important;
 }
+
+@keyframes slide {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  10% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  90% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.text-animation {
+  margin-bottom: 3px;
+  color: rgb(232, 17, 53); /* Adjust color as needed */
+  font-size: 32px; /* Adjust font size as needed */
+  font-weight: bold; /* Make text bold */
+  animation: slide 10s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Add a subtle text shadow */
+  background: linear-gradient(
+    to right,
+    #4e54c8,
+    #8f94fb
+  ); /* Gradient background */
+  -webkit-background-clip: text; /* Clip text to gradient */
+  -webkit-text-fill-color: transparent; /* Make text transparent to show gradient */
+}

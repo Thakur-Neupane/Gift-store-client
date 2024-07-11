@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export const Sidebar = () => {
   return (
-    <Stack gap={1}>
+    <Stack gap={1} className="fw-bold fs-5 text-primary shadow-lg vh-110">
       <div className="p-2">
         <Link className="nav-link" to="/admin/dashboard">
           Dashboard
@@ -12,6 +12,12 @@ export const Sidebar = () => {
       <div className="p-2">
         <Link className="nav-link" to="/admin/categories">
           Categories
+        </Link>
+      </div>
+
+      <div className="p-2">
+        <Link className="nav-link" to="/admin/sub-categories">
+          Sub-Categories
         </Link>
       </div>
       <div className="p-2">
