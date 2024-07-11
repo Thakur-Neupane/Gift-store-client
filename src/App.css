@@ -39,3 +39,26 @@
   -webkit-background-clip: text; /* Clip text to gradient */
   -webkit-text-fill-color: transparent; /* Make text transparent to show gradient */
 }
+
+.glassmorphism-sidebar {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.15
+  ); /* Adjust opacity for glass effect */
+  backdrop-filter: blur(10px); /* Adjust blur intensity */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Semi-transparent border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 15px;
+  width: 250px; /* Adjust sidebar width as needed */
+}
+
+.glassmorphism-sidebar hr {
+  border-top-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ); /* Semi-transparent border for HR */
+}
