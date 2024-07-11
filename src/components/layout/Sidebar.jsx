@@ -3,8 +3,8 @@ import { Stack } from "react-bootstrap";
 
 export const Sidebar = () => {
   return (
-    <div className="glassmorphism-sidebar">
-      <Stack gap={1} className="fw-bold fs-5 text-primary shadow-lg">
+    <div className="neumorphic-sidebar">
+      <Stack gap={1} className="fw-bold fs-5 text-primary">
         <div className="p-2">
           <Link className="nav-link" to="/admin/dashboard">
             Dashboard
