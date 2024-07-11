@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { autoLoginAction } from "./features/users/userAction";
 import ForgetPassword from "./pages/user/ForgetPassword";
 import NewProduct from "./pages/product/NewProduct";
+import { SubCategory } from "./pages/category/SubCategory";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ function App() {
         >
           <Route path="admin/dashboard" element={<Dashboard />} />
           <Route path="admin/categories" element={<Categories />} />
+          <Route path="admin/subcategories" element={<SubCategory />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/products/new" element={<NewProduct />} />
           <Route path="admin/users" element={<User />} />
