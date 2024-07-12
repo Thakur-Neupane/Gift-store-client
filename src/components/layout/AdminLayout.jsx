@@ -16,7 +16,7 @@ export const AdminLayout = () => {
           backgroundImage: `url(${bgImage})`,
         }}
       >
-        <div className="text-animation mb-3" style={{ color: "#E81135" }}>
+        {/* <div className="text-animation mb-3" style={{ color: "#E81135" }}>
           <span>R</span>
           <span>S</span>
           <span>&nbsp;</span>
@@ -28,7 +28,7 @@ export const AdminLayout = () => {
           <span>n</span>
           <span>g</span>
           <span>&nbsp;</span>
-          <span>s</span>
+          <span>S</span>
           <span>t</span>
           <span>o</span>
           <span>r</span>
@@ -37,7 +37,7 @@ export const AdminLayout = () => {
           <span>
             <FaGift />
           </span>
-        </div>
+        </div> */}
         <hr />
 
         <Sidebar />

@@ -47,7 +47,7 @@ function App() {
         >
           <Route path="admin/dashboard" element={<Dashboard />} />
           <Route path="admin/categories" element={<Categories />} />
-          <Route path="admin/subcategories" element={<SubCategory />} />
+          <Route path="admin/sub-categories" element={<SubCategory />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/products/new" element={<NewProduct />} />
           <Route path="admin/users" element={<User />} />

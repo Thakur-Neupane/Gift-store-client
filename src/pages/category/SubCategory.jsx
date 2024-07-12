@@ -1,5 +1,5 @@
 import React from "react";
 
 export const SubCategory = () => {
-  return <div></div>;
+  return <div>Sub Category</div>;
 };

@@ -40,7 +40,7 @@ export const Sidebar = () => {
             Reviews
           </Link>
         </div>
-        <hr />
+        <hr class="border border-dark shadow" />
         <div className="p-2">
           <Link className="nav-link" to="/admin/admins">
             Admins
