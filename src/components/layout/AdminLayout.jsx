@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import bgImage from "../../assets/bg.png";
 import patternImage from "../../assets/pattern.png";
-import { FaGift } from "react-icons/fa6";
+// import { FaGift } from "react-icons/fa6";
 
 export const AdminLayout = () => {
   return (

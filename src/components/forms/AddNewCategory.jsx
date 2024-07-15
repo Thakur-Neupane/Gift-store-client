@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { CustomInput } from "../common/custom-input/CustomInput";
 import { useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ export const AddNewCategory = ({ setShow }) => {
   const handleOnSubmit = async () => {
     const title = titleRef.current.value;
     if (!title) {
-      return alert("Must fill up the form frist");
+      return alert("Must fill up the form first");
     }
 
     const isSuccess = await dispatch(
@@ -33,17 +33,20 @@ export const AddNewCategory = ({ setShow }) => {
       forwardRef: titleRef,
     },
   ];
-  return (
-    <div>
-      <Form className="">
-        {inputs.map((item, i) => (
-          <CustomInput key={i} {...item} />
-        ))}
 
-        <div className="d-grid mt-3">
-          <Button onClick={handleOnSubmit}>Submit</Button>
-        </div>
-      </Form>
-    </div>
+  return (
+    <>
+      <div>
+        <Form className="">
+          {inputs.map((item, i) => (
+            <CustomInput key={i} {...item} />
+          ))}
+
+          <div className="d-grid mt-3">
+            <Button onClick={handleOnSubmit}>Submit</Button>
+          </div>
+        </Form>
+      </div>
+    </>
   );
 };

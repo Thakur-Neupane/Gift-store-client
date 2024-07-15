@@ -19,7 +19,7 @@ import { useDispatch } from "react-redux";
 import { autoLoginAction } from "./features/users/userAction";
 import ForgetPassword from "./pages/user/ForgetPassword";
 import NewProduct from "./pages/product/NewProduct";
-import { SubCategory } from "./pages/category/SubCategory";
+import SubCategory from "./pages/sub-category/SubCategory";
 
 function App() {
   const dispatch = useDispatch();
