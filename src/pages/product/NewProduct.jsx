@@ -31,8 +31,6 @@ const NewProduct = () => {
       return { text: title, value: _id };
     });
 
-  console.log(options);
-
   const inputs = [
     {
       label: "Category ",

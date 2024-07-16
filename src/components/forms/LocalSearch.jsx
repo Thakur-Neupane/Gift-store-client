@@ -5,11 +5,11 @@ const LocalSearch = ({ keyword, setKeyword }) => {
     setKeyword(e.target.value.toLowerCase());
   };
   return (
-    <div className="conatiner pt-4 pb-4">
+    <div className="conatiner pt-1 pb-1">
       <input
         type="search"
         className="form-control mb-4"
-        placeholder="Search For Category"
+        placeholder="Search "
         value={keyword}
         onChange={handleSearchChange}
         style={{ width: "200px" }}

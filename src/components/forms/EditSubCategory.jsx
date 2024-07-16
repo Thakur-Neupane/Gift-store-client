@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { CustomInput, CustomSelect } from "../common/custom-input/CustomInput";
 import { useDispatch } from "react-redux";
-import { updateCategoryAction } from "../../features/categories/catAction";
+import { updateSubCategoryAction } from "../../features/subcategories/subCatAction";
 import useForm from "../../Hooks/useForm";
 import { CustomModal } from "../common/custom-modal/CustomModal";
 
-export const EditCategory = ({ selectedCat, setShow }) => {
+const EditSubCategory = ({ selectedCat, setShow }) => {
   const dispatch = useDispatch();
   const { form, setForm, handleOnChange } = useForm({});
 
@@ -21,14 +21,14 @@ export const EditCategory = ({ selectedCat, setShow }) => {
 
     try {
       const response = await dispatch(
-        updateCategoryAction(selectedCat.slug, form)
+        updateSubCategoryAction(selectedCat.slug, form)
       );
 
       if (response) {
         setShow(false);
       }
     } catch (error) {
-      console.error("Error updating category:", error);
+      console.error("Error updating subcategory:", error);
     }
   };
 
@@ -37,7 +37,6 @@ export const EditCategory = ({ selectedCat, setShow }) => {
       isSelectType: true,
       label: "Status",
       name: "status",
-      type: "text",
       required: true,
       options: [
         {
@@ -46,8 +45,8 @@ export const EditCategory = ({ selectedCat, setShow }) => {
           selected: form.status === "active",
         },
         {
-          value: "inactive",
           text: "Inactive",
+          value: "inactive",
           selected: form.status === "inactive",
         },
       ],
@@ -62,14 +61,13 @@ export const EditCategory = ({ selectedCat, setShow }) => {
       label: "Slug",
       name: "slug",
       required: true,
-      placeholder: "Phones",
       value: form.slug,
       disabled: true,
     },
   ];
 
   return (
-    <CustomModal show={true} setShow={setShow} title="Edit Category">
+    <CustomModal show={true} setShow={setShow} title="Edit Sub-Category">
       <Form onSubmit={handleOnSubmit}>
         {inputs.map((item, i) =>
           item.isSelectType ? (
@@ -86,3 +84,5 @@ export const EditCategory = ({ selectedCat, setShow }) => {
     </CustomModal>
   );
 };
+
+export default EditSubCategory;

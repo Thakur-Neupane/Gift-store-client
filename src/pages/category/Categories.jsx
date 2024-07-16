@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { React } from "react";
 import { Button } from "react-bootstrap";
 import { CategoryTable } from "../../components/tables/CategoryTable";
 import { AddNewCategory } from "../../components/forms/AddNewCategory";
