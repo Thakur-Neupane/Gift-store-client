@@ -7,7 +7,7 @@ import {
   deleteSubCategoryAction,
 } from "../../features/subcategories/subCatAction";
 import EditSubCategory from "../forms/EditSubCategory";
-import { setShowModal } from "../../store/systemSlice";
+import { getCategoryAction } from "../../features/categories/catAction";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import LocalSearch from "../forms/LocalSearch";
 import AddNewSubCategory from "../forms/AddNewSubCategory";
@@ -18,11 +18,13 @@ const SubCategoryTable = () => {
   const [keyword, setKeyword] = useState("");
   const [showAddSubCat, setShowAddSubCat] = useState(false);
   const [showEditSubCat, setShowEditSubCat] = useState(false);
+
   const { subCats } = useSelector((state) => state.subCatInfo);
   const { cats } = useSelector((state) => state.catInfo);
 
   useEffect(() => {
     dispatch(getSubCategoryAction());
+    dispatch(getCategoryAction());
   }, [dispatch]);
 
   const handleOnEdit = (obj) => {
@@ -38,8 +40,16 @@ const SubCategoryTable = () => {
     }
   };
 
-  const searched = (keyword) => (item) =>
-    item.title.toLowerCase().includes(keyword);
+  const searched = (keyword) => (item) => {
+    const lowerKeyword = keyword.toLowerCase();
+    const parentCat = cats.find((cat) => cat._id === item.parent);
+    const parentTitle = parentCat ? parentCat.title.toLowerCase() : "";
+
+    return (
+      item.title.toLowerCase().includes(lowerKeyword) ||
+      parentTitle.includes(lowerKeyword)
+    );
+  };
 
   const getParentCategoryTitle = (parentId) => {
     const parentCat = cats.find((cat) => cat._id === parentId);
@@ -57,11 +67,7 @@ const SubCategoryTable = () => {
         <LocalSearch keyword={keyword} setKeyword={setKeyword} />
       </div>
 
-      <Button
-        variant="primary"
-        onClick={() => setShowAddSubCat(true)}
-        hidden={subCats.some((subCat) => subCat.status === "inactive")}
-      >
+      <Button variant="primary" onClick={() => setShowAddSubCat(true)}>
         <FaPlus /> Add New Sub-Category
       </Button>
 
@@ -69,6 +75,7 @@ const SubCategoryTable = () => {
         <AddNewSubCategory
           setShow={setShowAddSubCat}
           selectedCat={selectedSubCat}
+          isFromCategoryTable={false}
         />
       )}
 

@@ -1,19 +1,24 @@
 import React, { useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { CustomInput } from "../common/custom-input/CustomInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createNewSubCategoryAction } from "../../features/subcategories/subCatAction";
 import useForm from "../../Hooks/useForm";
 
-const AddNewSubCategory = ({ setShow, selectedCat }) => {
+const AddNewSubCategory = ({ setShow, selectedCat, isFromCategoryTable }) => {
   const { form, setForm, handleOnChange } = useForm();
   const dispatch = useDispatch();
+  const { cats } = useSelector((state) => state.catInfo);
 
   useEffect(() => {
     if (selectedCat && selectedCat._id) {
-      setForm({ parentCatId: selectedCat._id, title: "" });
+      if (isFromCategoryTable) {
+        setForm({ parentCatId: selectedCat._id, title: "" });
+      } else {
+        setForm({ parentCatId: "", title: "" });
+      }
     }
-  }, [selectedCat, setForm]);
+  }, [selectedCat, setForm, isFromCategoryTable]);
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +33,10 @@ const AddNewSubCategory = ({ setShow, selectedCat }) => {
     if (isSuccess) setShow(false);
   };
 
+  const sortedCats = Array.isArray(cats)
+    ? [...cats].sort((a, b) => a.title.localeCompare(b.title))
+    : [];
+
   return (
     <Modal show={true} onHide={() => setShow(false)}>
       <Modal.Header closeButton>
@@ -37,11 +46,27 @@ const AddNewSubCategory = ({ setShow, selectedCat }) => {
         <Form onSubmit={handleOnSubmit}>
           <Form.Group>
             <Form.Label>Parent Category</Form.Label>
-            <Form.Control
-              type="text"
-              readOnly
-              value={selectedCat ? selectedCat.title : ""}
-            />
+            {isFromCategoryTable ? (
+              <Form.Control
+                type="text"
+                readOnly
+                value={selectedCat ? selectedCat.title : ""}
+              />
+            ) : (
+              <Form.Control
+                as="select"
+                name="parentCatId"
+                onChange={handleOnChange}
+                required
+              >
+                <option value="">Select a Parent Category</option>
+                {sortedCats.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.title}
+                  </option>
+                ))}
+              </Form.Control>
+            )}
           </Form.Group>
           <CustomInput
             label="Sub-Category"
@@ -50,11 +75,6 @@ const AddNewSubCategory = ({ setShow, selectedCat }) => {
             required
             placeholder="Sub-Category"
             onChange={handleOnChange}
-          />
-          <input
-            type="hidden"
-            name="parentCatId"
-            value={selectedCat ? selectedCat._id : ""}
           />
           <div className="d-grid mt-3">
             <Button type="submit">Submit</Button>

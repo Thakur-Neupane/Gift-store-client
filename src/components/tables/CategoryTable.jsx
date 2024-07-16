@@ -7,17 +7,16 @@ import {
   deleteCategoryAction,
 } from "../../features/categories/catAction";
 import { EditCategory } from "../forms/EditCategor";
-import { setShowModal } from "../../store/systemSlice";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import LocalSearch from "../forms/LocalSearch";
 import AddNewSubCategory from "../forms/AddNewSubCategory";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const CategoryTable = () => {
   const dispatch = useDispatch();
   const [selectedCat, setSelectedCat] = useState({});
   const [keyword, setKeyword] = useState("");
   const [showAddSubCat, setShowAddSubCat] = useState(false);
-  const [showEditCat, setShowEditCat] = useState(false); // State for edit modal visibility
+  const [showEditCat, setShowEditCat] = useState(false);
   const { cats } = useSelector((state) => state.catInfo);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export const CategoryTable = () => {
 
   const handleOnEdit = (obj) => {
     setSelectedCat(obj);
-    setShowEditCat(true); // Show edit modal
+    setShowEditCat(true);
   };
 
   const handleDelete = (slug) => {
@@ -45,10 +44,6 @@ export const CategoryTable = () => {
   const searched = (keyword) => (item) =>
     item.title.toLowerCase().includes(keyword);
 
-  const getRowClass = (status) => {
-    return status === "active" ? "table-success" : "table-danger";
-  };
-
   return (
     <>
       <div className="d-flex justify-content-between align-items-center w-100 mb-3">
@@ -60,14 +55,12 @@ export const CategoryTable = () => {
         <AddNewSubCategory
           setShow={setShowAddSubCat}
           selectedCat={selectedCat}
+          isFromCategoryTable={true}
         />
       )}
 
       {showEditCat && (
-        <EditCategory
-          selectedCat={selectedCat}
-          setShow={setShowEditCat} // Pass setShow to handle modal close
-        />
+        <EditCategory selectedCat={selectedCat} setShow={setShowEditCat} />
       )}
 
       <Table striped bordered hover>
@@ -84,7 +77,7 @@ export const CategoryTable = () => {
           {cats
             .filter(searched(keyword))
             .map(({ _id, status, title, slug }, i) => (
-              <tr key={_id} className={getRowClass(status)}>
+              <tr key={_id}>
                 <td>{i + 1}</td>
                 <td>{status}</td>
                 <td>{title}</td>
@@ -104,10 +97,9 @@ export const CategoryTable = () => {
                     <FaTrash />
                   </Button>
                   <Button
-                    onClick={() => handleAddSubCategory({ _id, title, status })}
+                    onClick={() => handleAddSubCategory({ _id, title })}
                     variant="info"
                     className="ms-2"
-                    hidden={status === "inactive"}
                   >
                     Add Sub-Category
                   </Button>
