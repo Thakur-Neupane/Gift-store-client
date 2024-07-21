@@ -44,6 +44,10 @@ export const CategoryTable = () => {
   const searched = (keyword) => (item) =>
     item.title.toLowerCase().includes(keyword);
 
+  const getRowClass = (status) => {
+    return status === "active" ? "table-success" : "table-danger";
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between align-items-center w-100 mb-3">
@@ -77,7 +81,7 @@ export const CategoryTable = () => {
           {cats
             .filter(searched(keyword))
             .map(({ _id, status, title, slug }, i) => (
-              <tr key={_id}>
+              <tr key={_id} className={getRowClass(status)}>
                 <td>{i + 1}</td>
                 <td>{status}</td>
                 <td>{title}</td>
@@ -96,13 +100,15 @@ export const CategoryTable = () => {
                   >
                     <FaTrash />
                   </Button>
-                  <Button
-                    onClick={() => handleAddSubCategory({ _id, title })}
-                    variant="info"
-                    className="ms-2"
-                  >
-                    Add Sub-Category
-                  </Button>
+                  {status === "active" && (
+                    <Button
+                      onClick={() => handleAddSubCategory({ _id, title })}
+                      variant="info"
+                      className="ms-2"
+                    >
+                      Add Sub-Category
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

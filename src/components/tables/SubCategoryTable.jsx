@@ -67,7 +67,11 @@ const SubCategoryTable = () => {
         <LocalSearch keyword={keyword} setKeyword={setKeyword} />
       </div>
 
-      <Button variant="primary" onClick={() => setShowAddSubCat(true)}>
+      <Button
+        className="mb-2"
+        variant="primary"
+        onClick={() => setShowAddSubCat(true)}
+      >
         <FaPlus /> Add New Sub-Category
       </Button>
 

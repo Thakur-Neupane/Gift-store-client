@@ -12,22 +12,22 @@ export const CustomInput = ({ label, forwardRef, ...rest }) => {
 
 export const CustomSelect = ({
   label,
-  options,
-  forwardRef,
-  isSelectType,
+  options = [],
+  onChange,
+  value,
   ...rest
 }) => {
   return (
     <Form.Group>
       {label && <Form.Label>{label}</Form.Label>}
-
-      <Form.Select {...rest} ref={forwardRef}>
+      <Form.Select onChange={onChange} value={value} {...rest}>
         <option value=""> -- Select --</option>
-        {options.map(({ value, text, selected }, i) => (
-          <option key={i} value={value} selected={selected}>
-            {text}
-          </option>
-        ))}
+        {options &&
+          options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.text}
+            </option>
+          ))}
       </Form.Select>
     </Form.Group>
   );

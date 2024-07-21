@@ -20,6 +20,9 @@ const AddNewSubCategory = ({ setShow, selectedCat, isFromCategoryTable }) => {
     }
   }, [selectedCat, setForm, isFromCategoryTable]);
 
+  // Filter active categories
+  const activeCats = cats.filter((cat) => cat.status === "active");
+
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,8 +36,8 @@ const AddNewSubCategory = ({ setShow, selectedCat, isFromCategoryTable }) => {
     if (isSuccess) setShow(false);
   };
 
-  const sortedCats = Array.isArray(cats)
-    ? [...cats].sort((a, b) => a.title.localeCompare(b.title))
+  const sortedCats = Array.isArray(activeCats)
+    ? [...activeCats].sort((a, b) => a.title.localeCompare(b.title))
     : [];
 
   return (

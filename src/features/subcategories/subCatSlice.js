@@ -8,14 +8,12 @@ const subCatSlice = createSlice({
   name: "subCategory",
   initialState,
   reducers: {
-    setSubCats: (state, { payload = [] }) => {
-      state.subCats = payload;
+    setSubCats: (state, action) => {
+      state.subCats = action.payload; // Ensure the payload matches the structure of sub-categories array
     },
   },
 });
 
-const { reducer, actions } = subCatSlice;
+export const { setSubCats } = subCatSlice.actions;
 
-export const { setSubCats } = actions;
-
-export default reducer;
+export default subCatSlice.reducer;

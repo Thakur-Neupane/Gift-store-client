@@ -49,3 +49,14 @@ export const updateSubCategory = async (slug, subcategory) => {
 
   return apiProcessor(obj);
 };
+
+// Get all sub-categories by parent category id
+export const getAllSubCategoriesByParentCatId = (parentCatId) => {
+  const obj = {
+    url: `${catEP}/${parentCatId}`,
+    method: "get",
+    isPrivate: true,
+  };
+
+  return apiProcessor(obj);
+};
