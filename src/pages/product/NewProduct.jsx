@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
-import {
-  CustomInput,
-  CustomSelect,
-} from "../../components/common/custom-input/CustomInput";
 import { Button, Form } from "react-bootstrap";
 import useForm from "../../Hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryAction } from "../../features/categories/catAction";
 import { Link } from "react-router-dom";
-import { createNewProductAction } from "../../features/products/productAction";
+import {
+  createNewProductAction,
+  getProductAction,
+} from "../../features/products/productAction";
+import { CustomInput } from "../../components/common/custom-input/CustomInput";
+import { CustomSelect } from "../../components/common/custom-input/CustomInput";
 
 const NewProduct = () => {
   const { form, setForm, handleOnChange } = useForm();
@@ -16,12 +17,30 @@ const NewProduct = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    !cats.length && dispatch(getCategoryAction());
-  }, []);
+    if (!cats.length) {
+      dispatch(getCategoryAction());
+    }
+    dispatch(getProductAction()); // Fetch products on mount
+  }, [cats, dispatch]);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    dispatch(createNewProductAction(form));
+
+    const formData = {
+      ...form,
+      sold: parseInt(form.sold, 10) || 0,
+      category: form.parentCatId,
+    };
+
+    dispatch(createNewProductAction(formData))
+      .then(() => {
+        // After successful creation, fetch products again to update the list
+        dispatch(getProductAction());
+      })
+      .catch((error) => {
+        console.error("Error creating product:", error);
+        // Handle error if needed
+      });
   };
 
   const options = cats
@@ -32,29 +51,18 @@ const NewProduct = () => {
 
   const inputs = [
     {
-      label: "Category",
+      label: "Category ",
       name: "parentCatId",
       type: "text",
       required: true,
-
-      type: "select",
+      isSelectType: true,
       options,
     },
-
-    // {
-    //   label: "Sub Categories",
-    //   name: "subCategories",
-    //   type: "text",
-    //   placeholder: "Sub Category IDs",
-    //   required: true,
-    //   isSelectType: true,
-    //   options,
-    // },
     {
       label: "Shipping",
       name: "shipping",
       type: "text",
-      placeholder: "Yes or NO ",
+      placeholder: "Yes or NO",
     },
     {
       label: "Name",
@@ -63,7 +71,6 @@ const NewProduct = () => {
       required: true,
       placeholder: "Phones",
     },
-
     {
       label: "SKU",
       name: "sku",
@@ -116,7 +123,6 @@ const NewProduct = () => {
       type: "text",
       placeholder: "URL",
     },
-
     {
       label: "Color",
       name: "color",
@@ -149,7 +155,7 @@ const NewProduct = () => {
       <Link to="/admin/products">
         <Button variant="secondary">&lt; Back</Button>
       </Link>
-      <Form onSubmit={handleOnSubmit}>
+      <Form onSubmit={handleOnSubmit} encType="multipart/form-data">
         {inputs.map((item, i) =>
           item.isSelectType ? (
             <CustomSelect key={i} {...item} onChange={handleOnChange} />
@@ -161,7 +167,12 @@ const NewProduct = () => {
         <Form.Group>
           <Form.Label>Upload Images</Form.Label>
 
-          <Form.Control type="file" multiple />
+          <Form.Control
+            type="file"
+            name="images"
+            accept="image/jpg, image/png, image/gif, image/jpeg"
+            multiple
+          />
         </Form.Group>
 
         <div className="d-grid mt-3">

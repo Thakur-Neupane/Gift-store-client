@@ -1,18 +1,23 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Pagination, Table } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { getProductAction } from "../../features/products/productAction";
 
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const { products } = useSelector((state) => state.productInfo);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getProductAction());
+  }, [dispatch]);
 
   useEffect(() => {
     setDisplayProd(products);
-  }, []);
+  }, [products]);
 
-  let active = 2;
+  let active = 2; // Placeholder for active pagination item
   let items = [];
   for (let number = 1; number <= 5; number++) {
     items.push(
@@ -21,10 +26,11 @@ export const ProductTable = () => {
       </Pagination.Item>
     );
   }
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center my-4">
-        <div>30 Products Found</div>
+        <div>{products.length} Products Found</div>
         <div>
           <Form.Control placeholder="Search by name..." />
         </div>
@@ -43,9 +49,9 @@ export const ProductTable = () => {
           </tr>
         </thead>
         <tbody>
-          {displayProd.map((prod, i) => (
+          {displayProd.map((prod, index) => (
             <tr key={prod._id}>
-              <td>{1 + i}</td>
+              <td>{index + 1}</td>
               <td>
                 <img src={prod.thumbnail} width="70px" alt="" />
               </td>
