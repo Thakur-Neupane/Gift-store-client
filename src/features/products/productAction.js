@@ -1,8 +1,13 @@
 import { getAllProducts, postNewProduct } from "./productAxios";
 import { setProducts } from "./productSlice";
 
-export const createNewProductAction = async (productData) => {
-  await postNewProduct(productData);
+export const createNewProductAction = (productData) => async (dispatch) => {
+  try {
+    await postNewProduct(productData);
+    dispatch(getProductAction());
+  } catch (error) {
+    console.error("Error creating new product:", error);
+  }
 };
 
 export const getProductAction = () => async (dispatch) => {

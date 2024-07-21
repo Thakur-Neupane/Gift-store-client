@@ -21,8 +21,7 @@ const NewProduct = () => {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
-    createNewProductAction(form);
+    dispatch(createNewProductAction(form));
   };
 
   const options = cats
@@ -33,12 +32,29 @@ const NewProduct = () => {
 
   const inputs = [
     {
-      label: "Category ",
+      label: "Category",
       name: "parentCatId",
       type: "text",
       required: true,
-      isSelectType: true,
+
+      type: "select",
       options,
+    },
+
+    // {
+    //   label: "Sub Categories",
+    //   name: "subCategories",
+    //   type: "text",
+    //   placeholder: "Sub Category IDs",
+    //   required: true,
+    //   isSelectType: true,
+    //   options,
+    // },
+    {
+      label: "Shipping",
+      name: "shipping",
+      type: "text",
+      placeholder: "Yes or NO ",
     },
     {
       label: "Name",
@@ -47,6 +63,7 @@ const NewProduct = () => {
       required: true,
       placeholder: "Phones",
     },
+
     {
       label: "SKU",
       name: "sku",
@@ -57,10 +74,16 @@ const NewProduct = () => {
     {
       label: "Qty",
       name: "qty",
-      type: "num",
+      type: "number",
       min: 1,
       required: true,
       placeholder: "22",
+    },
+    {
+      label: "Sold",
+      name: "sold",
+      type: "number",
+      placeholder: "0",
     },
     {
       label: "Price",
@@ -86,6 +109,25 @@ const NewProduct = () => {
       label: "Sales End Date",
       name: "salesEnd",
       type: "date",
+    },
+    {
+      label: "Thumbnail",
+      name: "thumbnail",
+      type: "text",
+      placeholder: "URL",
+    },
+
+    {
+      label: "Color",
+      name: "color",
+      type: "text",
+      placeholder: "Color",
+    },
+    {
+      label: "Brand",
+      name: "brand",
+      type: "text",
+      placeholder: "Brand",
     },
     {
       label: "Description",

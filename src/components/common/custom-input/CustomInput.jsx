@@ -22,12 +22,11 @@ export const CustomSelect = ({
       {label && <Form.Label>{label}</Form.Label>}
       <Form.Select onChange={onChange} value={value} {...rest}>
         <option value=""> -- Select --</option>
-        {options &&
-          options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.text}
-            </option>
-          ))}
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.text}
+          </option>
+        ))}
       </Form.Select>
     </Form.Group>
   );
