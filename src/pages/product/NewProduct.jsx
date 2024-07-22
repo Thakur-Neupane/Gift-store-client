@@ -17,7 +17,6 @@ const NewProduct = () => {
   const { form, handleOnChange } = useForm();
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
-  console.log(subCats);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategoryOptions, setSubCategoryOptions] = useState([]);
 
@@ -28,15 +27,13 @@ const NewProduct = () => {
 
   useEffect(() => {
     if (selectedCategory) {
-      console.log(`Fetching subcategories for category: ${selectedCategory}`);
-      getSubCategoryOptions(selectedCategory);
+      fetchSubCategories(selectedCategory);
     } else {
-      console.log("No category selected. Clearing subcategory options.");
       setSubCategoryOptions([]);
     }
   }, [selectedCategory]);
 
-  const getSubCategoryOptions = async (parentCatId) => {
+  const fetchSubCategories = async (parentCatId) => {
     try {
       const response = await getAllSubCategories();
       if (response && response.data) {
