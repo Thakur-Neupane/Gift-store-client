@@ -51,7 +51,6 @@ export const apiProcessor = async ({
 
       const response = await getNewAccessJWT();
 
-      console.log(response);
       if (response.accessJWT) {
         sessionStorage.setItem("accessJWT", response.accessJWT);
         return apiProcessor({

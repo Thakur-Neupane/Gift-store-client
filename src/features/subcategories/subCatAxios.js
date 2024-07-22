@@ -1,10 +1,10 @@
 import { apiProcessor } from "../../services/axios";
-const catEP = import.meta.env.VITE_APP_SERVR_ROOT + "/api/v1/sub-categories";
+const subCatEP = import.meta.env.VITE_APP_SERVR_ROOT + "/api/v1/sub-categories";
 
 // Post new subcategory
 export const postNewSubCategory = (data) => {
   const obj = {
-    url: catEP,
+    url: subCatEP,
     method: "post",
     data,
     isPrivate: true,
@@ -17,7 +17,7 @@ export const postNewSubCategory = (data) => {
 // Get all sub-categories
 export const getAllSubCategories = () => {
   const obj = {
-    url: catEP,
+    url: subCatEP,
     method: "get",
     isPrivate: true,
   };
@@ -28,7 +28,7 @@ export const getAllSubCategories = () => {
 // Delete subcategory by slug
 export const deleteSubCategory = (slug) => {
   const obj = {
-    url: `${catEP}/${slug}`,
+    url: `${subCatEP}/${slug}`,
     method: "delete",
     isPrivate: true,
     showToast: true,
@@ -40,7 +40,7 @@ export const deleteSubCategory = (slug) => {
 // Update subcategory by slug
 export const updateSubCategory = async (slug, subcategory) => {
   const obj = {
-    url: `${catEP}/${slug}`,
+    url: `${subCatEP}/${slug}`,
     method: "put",
     data: subcategory,
     isPrivate: true,
@@ -53,7 +53,7 @@ export const updateSubCategory = async (slug, subcategory) => {
 // Get all sub-categories by parent category id
 export const getAllSubCategoriesByParentCatId = (parentCatId) => {
   const obj = {
-    url: `${catEP}/${parentCatId}`,
+    url: `${subCatEP}/${parentCatId}`,
     method: "get",
     isPrivate: true,
   };
