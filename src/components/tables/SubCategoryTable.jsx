@@ -20,6 +20,7 @@ const SubCategoryTable = () => {
   const [showEditSubCat, setShowEditSubCat] = useState(false);
 
   const { subCats } = useSelector((state) => state.subCatInfo);
+  console.log(subCats);
   const { cats } = useSelector((state) => state.catInfo);
 
   useEffect(() => {

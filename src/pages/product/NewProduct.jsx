@@ -1,112 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import {
+  CustomInput,
+  CustomSelect,
+} from "../../components/common/custom-input/CustomInput";
 import { Button, Form } from "react-bootstrap";
 import useForm from "../../Hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryAction } from "../../features/categories/catAction";
-import { getAllSubCategories } from "../../features/subcategories/subCatAxios";
 import { Link } from "react-router-dom";
-import {
-  createNewProductAction,
-  getProductAction,
-} from "../../features/products/productAction";
-import { CustomInput } from "../../components/common/custom-input/CustomInput";
-import { CustomSelect } from "../../components/common/custom-input/CustomInput";
+import { createNewProductAction } from "../../features/products/productAction";
 
 const NewProduct = () => {
-  const dispatch = useDispatch();
-  const { form, handleOnChange } = useForm();
+  const { form, setForm, handleOnChange } = useForm();
   const { cats } = useSelector((state) => state.catInfo);
-  const { subCats } = useSelector((state) => state.subCatInfo);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getCategoryAction());
-    dispatch(getProductAction());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (selectedCategory) {
-      fetchSubCategories(selectedCategory);
-    } else {
-      setSubCategoryOptions([]);
-    }
-  }, [selectedCategory]);
-
-  const fetchSubCategories = async (parentCatId) => {
-    try {
-      const response = await getAllSubCategories(); // Replace with your subcategory fetching logic
-      if (response && response.data) {
-        const subCategories = response.data.filter(
-          (subCat) => subCat.parentCatId === parentCatId
-        );
-        const options = subCategories.map(({ _id, title }) => ({
-          text: title,
-          value: _id,
-        }));
-        setSubCategoryOptions(options);
-      } else {
-        console.error("Error fetching subcategories:", response);
-        setSubCategoryOptions([]);
-      }
-    } catch (error) {
-      console.error("Error fetching subcategories:", error);
-      setSubCategoryOptions([]);
-    }
-  };
+    !cats.length && dispatch(getCategoryAction());
+  }, []);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
-    const formData = {
-      ...form,
-      sold: parseInt(form.sold, 10) || 0,
-      subCategoryId: form.subCategoryId,
-    };
-
-    dispatch(createNewProductAction(formData))
-      .then(() => {
-        console.log("Product created successfully.");
-        dispatch(getProductAction());
-      })
-      .catch((error) => {
-        console.error("Error creating product:", error);
-      });
+    createNewProductAction(form);
   };
 
-  const handleCategoryChange = (e) => {
-    const selectedCatId = e.target.value;
-    setSelectedCategory(selectedCatId);
-    handleOnChange(e);
-  };
-
-  const categoryOptions = cats
-    .filter((cat) => cat.status === "active")
-    .map(({ title, _id }) => ({ text: title, value: _id }));
+  const options = cats
+    .filter((p) => p.status === "active")
+    .map(({ title, _id }) => {
+      return { text: title, value: _id };
+    });
 
   const inputs = [
     {
-      label: "Category",
+      label: "Category ",
       name: "parentCatId",
       type: "text",
       required: true,
       isSelectType: true,
-      options: categoryOptions,
-      onChange: handleCategoryChange,
-    },
-    {
-      label: "Subcategory",
-      name: "subCategoryId",
-      type: "text",
-      required: true,
-      isSelectType: true,
-      options: subCategoryOptions,
-    },
-    {
-      label: "Shipping",
-      name: "shipping",
-      type: "text",
-      placeholder: "Yes or No",
+      options,
     },
     {
       label: "Name",
@@ -125,16 +57,10 @@ const NewProduct = () => {
     {
       label: "Qty",
       name: "qty",
-      type: "number",
+      type: "num",
       min: 1,
       required: true,
       placeholder: "22",
-    },
-    {
-      label: "Sold",
-      name: "sold",
-      type: "number",
-      placeholder: "0",
     },
     {
       label: "Price",
@@ -162,24 +88,6 @@ const NewProduct = () => {
       type: "date",
     },
     {
-      label: "Thumbnail",
-      name: "thumbnail",
-      type: "text",
-      placeholder: "URL",
-    },
-    {
-      label: "Color",
-      name: "color",
-      type: "text",
-      placeholder: "Color",
-    },
-    {
-      label: "Brand",
-      name: "brand",
-      type: "text",
-      placeholder: "Brand",
-    },
-    {
       label: "Description",
       name: "description",
       type: "text",
@@ -199,7 +107,7 @@ const NewProduct = () => {
       <Link to="/admin/products">
         <Button variant="secondary">&lt; Back</Button>
       </Link>
-      <Form onSubmit={handleOnSubmit} encType="multipart/form-data">
+      <Form onSubmit={handleOnSubmit}>
         {inputs.map((item, i) =>
           item.isSelectType ? (
             <CustomSelect key={i} {...item} onChange={handleOnChange} />
@@ -210,12 +118,8 @@ const NewProduct = () => {
 
         <Form.Group>
           <Form.Label>Upload Images</Form.Label>
-          <Form.Control
-            type="file"
-            name="images"
-            accept="image/jpg, image/png, image/gif, image/jpeg"
-            multiple
-          />
+
+          <Form.Control type="file" multiple />
         </Form.Group>
 
         <div className="d-grid mt-3">
