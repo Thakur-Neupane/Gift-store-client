@@ -1,23 +1,34 @@
 import React, { useEffect } from "react";
-import {
-  CustomInput,
-  CustomSelect,
-} from "../../components/common/custom-input/CustomInput";
 import { Button, Form } from "react-bootstrap";
 import useForm from "../../Hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryAction } from "../../features/categories/catAction";
+import {
+  getSubCategoryAction,
+  getSubCategoryActionByParentCatId,
+} from "../../features/subcategories/subCatAction";
 import { Link } from "react-router-dom";
 import { createNewProductAction } from "../../features/products/productAction";
+import {
+  CustomInput,
+  CustomSelect,
+} from "../../components/common/custom-input/CustomInput";
 
 const NewProduct = () => {
   const { form, setForm, handleOnChange } = useForm();
   const { cats } = useSelector((state) => state.catInfo);
+  const { subCats } = useSelector((state) => state.subCatInfo);
   const dispatch = useDispatch();
 
   useEffect(() => {
     !cats.length && dispatch(getCategoryAction());
+    dispatch(getSubCategoryAction());
   }, []);
+
+  const handleParentCatChange = (e) => {
+    const parentCatId = e.target.value;
+    dispatch(getSubCategoryActionByParentCatId(parentCatId));
+  };
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -25,20 +36,34 @@ const NewProduct = () => {
     createNewProductAction(form);
   };
 
-  const options = cats
+  const catOptions = cats
     .filter((p) => p.status === "active")
     .map(({ title, _id }) => {
       return { text: title, value: _id };
     });
 
+  const subCatOptions = subCats.map(({ title, _id }) => ({
+    text: title,
+    value: _id,
+  }));
+
   const inputs = [
     {
-      label: "Category ",
+      label: "Category",
       name: "parentCatId",
       type: "text",
       required: true,
       isSelectType: true,
-      options,
+      options: catOptions,
+      onChange: handleParentCatChange,
+    },
+    {
+      label: "Sub-Category",
+      name: "subCatId",
+      type: "text",
+      required: true,
+      isSelectType: true,
+      options: subCatOptions,
     },
     {
       label: "Name",
@@ -118,7 +143,6 @@ const NewProduct = () => {
 
         <Form.Group>
           <Form.Label>Upload Images</Form.Label>
-
           <Form.Control type="file" multiple />
         </Form.Group>
 

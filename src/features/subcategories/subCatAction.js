@@ -62,7 +62,6 @@ export const deleteSubCategoryAction = (slug) => async (dispatch) => {
     console.error("Error deleting sub-category:", error);
   }
 };
-
 // Get all sub-categories action by parent category id
 export const getSubCategoryActionByParentCatId =
   (parentCatId) => async (dispatch) => {
