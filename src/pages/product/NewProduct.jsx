@@ -35,7 +35,7 @@ const NewProduct = () => {
 
   const fetchSubCategories = async (parentCatId) => {
     try {
-      const response = await getAllSubCategories();
+      const response = await getAllSubCategories(); // Replace with your subcategory fetching logic
       if (response && response.data) {
         const subCategories = response.data.filter(
           (subCat) => subCat.parentCatId === parentCatId
