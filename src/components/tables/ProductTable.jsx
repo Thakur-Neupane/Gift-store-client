@@ -13,6 +13,7 @@ export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [subCategoryFilter, setSubCategoryFilter] = useState("");
   const { products } = useSelector((state) => state.productInfo);
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
@@ -40,7 +41,7 @@ export const ProductTable = () => {
     return subCat ? subCat.title : "N/A";
   };
 
-  // Filter products based on search keyword and category filter
+  // Filter products based on search keyword, category filter, and subcategory filter
   useEffect(() => {
     let filteredProducts = products;
 
@@ -56,8 +57,14 @@ export const ProductTable = () => {
       );
     }
 
+    if (subCategoryFilter) {
+      filteredProducts = filteredProducts.filter(
+        (prod) => prod.subCategories === subCategoryFilter
+      );
+    }
+
     setDisplayProd(filteredProducts);
-  }, [products, keyword, categoryFilter]);
+  }, [products, keyword, categoryFilter, subCategoryFilter]);
 
   let active = 2;
   let items = [];
@@ -79,7 +86,10 @@ export const ProductTable = () => {
             setKeyword={setKeyword}
             categoryFilter={categoryFilter}
             setCategoryFilter={setCategoryFilter}
+            subCategoryFilter={subCategoryFilter}
+            setSubCategoryFilter={setSubCategoryFilter}
             categories={cats}
+            subCategories={subCats}
           />
         </div>
       </div>
