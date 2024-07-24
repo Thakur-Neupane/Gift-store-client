@@ -11,7 +11,8 @@ import LocalSearch from "../forms/LocalSearch";
 
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
-  const [keyword, setKeyword] = useState(""); // State for search keyword
+  const [keyword, setKeyword] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const { products } = useSelector((state) => state.productInfo);
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
@@ -39,13 +40,24 @@ export const ProductTable = () => {
     return subCat ? subCat.title : "N/A";
   };
 
-  // Filter products based on search keyword
+  // Filter products based on search keyword and category filter
   useEffect(() => {
-    const filteredProducts = products.filter((prod) =>
-      prod.name.toLowerCase().includes(keyword)
-    );
+    let filteredProducts = products;
+
+    if (keyword) {
+      filteredProducts = filteredProducts.filter((prod) =>
+        prod.name.toLowerCase().includes(keyword)
+      );
+    }
+
+    if (categoryFilter) {
+      filteredProducts = filteredProducts.filter(
+        (prod) => prod.category === categoryFilter
+      );
+    }
+
     setDisplayProd(filteredProducts);
-  }, [products, keyword]);
+  }, [products, keyword, categoryFilter]);
 
   let active = 2;
   let items = [];
@@ -62,7 +74,13 @@ export const ProductTable = () => {
       <div className="d-flex justify-content-between align-items-center my-4">
         <div>{products.length} Products Found</div>
         <div>
-          <LocalSearch keyword={keyword} setKeyword={setKeyword} />
+          <LocalSearch
+            keyword={keyword}
+            setKeyword={setKeyword}
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+            categories={cats}
+          />
         </div>
       </div>
 
