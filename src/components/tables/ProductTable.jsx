@@ -8,7 +8,6 @@ import { getProductAction } from "../../features/products/productAction";
 import { getCategoryAction } from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
 import LocalSearch from "../forms/LocalSearch";
-
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const [keyword, setKeyword] = useState("");
@@ -66,6 +65,9 @@ export const ProductTable = () => {
     setDisplayProd(filteredProducts);
   }, [products, keyword, categoryFilter, subCategoryFilter]);
 
+  // Calculate the count of products found based on filtered products
+  const productsFound = displayProd.length;
+
   let active = 2;
   let items = [];
   for (let number = 1; number <= 5; number++) {
@@ -79,7 +81,7 @@ export const ProductTable = () => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center my-4">
-        <div>{products.length} Products Found</div>
+        <div>{productsFound} Products Found</div>
         <div>
           <LocalSearch
             keyword={keyword}
