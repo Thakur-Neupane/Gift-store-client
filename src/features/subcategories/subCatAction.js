@@ -13,7 +13,7 @@ export const getSubCategoryAction = () => async (dispatch) => {
     const response = await getAllSubCategories();
 
     if (response.status === "success") {
-      dispatch(setSubCats(response.categories)); // Ensure the response key matches what's returned from the API
+      dispatch(setSubCats(response.categories));
     }
   } catch (error) {
     console.error("Error fetching sub-categories:", error);
@@ -62,7 +62,9 @@ export const deleteSubCategoryAction = (slug) => async (dispatch) => {
     console.error("Error deleting sub-category:", error);
   }
 };
+
 // Get all sub-categories action by parent category id
+
 export const getSubCategoryActionByParentCatId =
   (parentCatId) => async (dispatch) => {
     try {

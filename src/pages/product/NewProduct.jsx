@@ -21,19 +21,22 @@ const NewProduct = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    !cats.length && dispatch(getCategoryAction());
+    if (!cats.length) {
+      dispatch(getCategoryAction());
+    }
     dispatch(getSubCategoryAction());
   }, []);
 
   const handleParentCatChange = (e) => {
     const parentCatId = e.target.value;
     dispatch(getSubCategoryActionByParentCatId(parentCatId));
+    setForm({ ...form, parentCatId });
   };
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
     createNewProductAction(form);
+    setForm({});
   };
 
   const catOptions = cats
@@ -82,7 +85,7 @@ const NewProduct = () => {
     {
       label: "Qty",
       name: "qty",
-      type: "num",
+      type: "number",
       min: 1,
       required: true,
       placeholder: "22",
@@ -117,10 +120,33 @@ const NewProduct = () => {
       name: "description",
       type: "text",
       as: "textarea",
-      maxLength: 5000,
-      rows: 10,
+      rows: 6,
       required: true,
       placeholder: "Write product details",
+    },
+    {
+      label: "Thumbnail",
+      name: "thumbnail",
+      type: "text",
+      placeholder: "Enter URL of product thumbnail",
+    },
+    {
+      label: "Shipping",
+      name: "shipping",
+      type: "text",
+      placeholder: "Yes or No",
+    },
+    {
+      label: "Color",
+      name: "color",
+      type: "text",
+      placeholder: "Product color",
+    },
+    {
+      label: "Brand",
+      name: "brand",
+      type: "text",
+      placeholder: "Product brand",
     },
   ];
 
@@ -141,7 +167,7 @@ const NewProduct = () => {
           )
         )}
 
-        <Form.Group>
+        <Form.Group controlId="formImages">
           <Form.Label>Upload Images</Form.Label>
           <Form.Control type="file" multiple />
         </Form.Group>

@@ -4,7 +4,7 @@ import { setProducts } from "./productSlice";
 export const createNewProductAction = (productData) => async (dispatch) => {
   try {
     await postNewProduct(productData);
-    dispatch(getProductsAction());
+    dispatch(getProductAction());
   } catch (error) {
     console.error("Error creating new product:", error);
   }
