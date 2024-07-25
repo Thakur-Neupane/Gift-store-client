@@ -8,6 +8,7 @@ import { getProductAction } from "../../features/products/productAction";
 import { getCategoryAction } from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
 import LocalSearch from "../forms/LocalSearch";
+
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const [keyword, setKeyword] = useState("");

@@ -8,7 +8,10 @@ import {
   getSubCategoryActionByParentCatId,
 } from "../../features/subcategories/subCatAction";
 import { Link } from "react-router-dom";
-import { createNewProductAction } from "../../features/products/productAction";
+import {
+  createNewProductAction,
+  getProductAction,
+} from "../../features/products/productAction";
 import {
   CustomInput,
   CustomSelect,
@@ -35,7 +38,12 @@ const NewProduct = () => {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    createNewProductAction(form);
+    if (!form.name) {
+      console.error("Product name is required");
+      return;
+    }
+
+    dispatch(createNewProductAction(form));
     setForm({});
   };
 
@@ -53,7 +61,7 @@ const NewProduct = () => {
   const inputs = [
     {
       label: "Category",
-      name: "parentCatId",
+      name: "category",
       type: "text",
       required: true,
       isSelectType: true,
