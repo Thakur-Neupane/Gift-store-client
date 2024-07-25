@@ -43,7 +43,13 @@ const NewProduct = () => {
       return;
     }
 
-    dispatch(createNewProductAction(form));
+    // Ensure subCatId is included in the form state
+    const formData = {
+      ...form,
+      subCatId: form.subCatId,
+    };
+
+    dispatch(createNewProductAction(formData));
     setForm({});
   };
 
