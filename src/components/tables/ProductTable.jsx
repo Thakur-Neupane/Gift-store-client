@@ -1,7 +1,5 @@
-// ProductTable.jsx
-
 import React, { useEffect, useState } from "react";
-import { Button, Form, Pagination, Table } from "react-bootstrap";
+import { Button, Table, Pagination } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getProductAction } from "../../features/products/productAction";
@@ -17,6 +15,7 @@ export const ProductTable = () => {
   const { products } = useSelector((state) => state.productInfo);
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,10 +34,23 @@ export const ProductTable = () => {
     return parentCat ? parentCat.title : "N/A";
   };
 
-  // Function to get subcategory title from ID
-  const getSubCategoryTitle = (subCatId) => {
-    const subCat = subCats.find((subCat) => subCat._id === subCatId);
-    return subCat ? subCat.title : "N/A";
+  // Helper function to get sub-category titles based on IDs
+  const getSubCategoryTitle = (prod, subCats) => {
+    if (
+      !subCats ||
+      subCats.length === 0 ||
+      !prod.subCategories ||
+      prod.subCategories.length === 0
+    ) {
+      return "N/A";
+    }
+
+    const subCategoryTitles = prod.subCategories.map((subCatId) => {
+      const subCat = subCats.find((sc) => sc._id === subCatId);
+      return subCat ? subCat.title : "N/A";
+    });
+
+    return subCategoryTitles.join(", ");
   };
 
   // Filter products based on search keyword, category filter, and subcategory filter
@@ -47,7 +59,7 @@ export const ProductTable = () => {
 
     if (keyword) {
       filteredProducts = filteredProducts.filter((prod) =>
-        prod.name.toLowerCase().includes(keyword)
+        prod.name.toLowerCase().includes(keyword.toLowerCase())
       );
     }
 
@@ -58,22 +70,22 @@ export const ProductTable = () => {
     }
 
     if (subCategoryFilter) {
-      filteredProducts = filteredProducts.filter(
-        (prod) => prod.subCategories === subCategoryFilter
+      filteredProducts = filteredProducts.filter((prod) =>
+        prod.subCategories.includes(subCategoryFilter)
       );
     }
 
     setDisplayProd(filteredProducts);
-  }, [products, keyword, categoryFilter, subCategoryFilter]);
+  }, [products, keyword, categoryFilter, subCategoryFilter, subCats]);
 
   // Calculate the count of products found based on filtered products
   const productsFound = displayProd.length;
 
-  let active = 2;
+  // Pagination example (adjust as per your pagination logic)
   let items = [];
   for (let number = 1; number <= 5; number++) {
     items.push(
-      <Pagination.Item key={number} active={number === active}>
+      <Pagination.Item key={number} active={number === 1}>
         {number}
       </Pagination.Item>
     );
@@ -133,7 +145,8 @@ export const ProductTable = () => {
               <td>{prod.slug}</td>
               <td>{prod.sku}</td>
               <td>{getParentCategoryTitle(prod.category)}</td>
-              <td>{getSubCategoryTitle(prod.subCategories)}</td>
+              <td>{getSubCategoryTitle(prod, subCats)}</td>{" "}
+              {/* Ensure subCats is passed */}
               <td>
                 {prod.description.length > 50
                   ? `${prod.description.slice(0, 50)}...`
