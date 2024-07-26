@@ -16,11 +16,11 @@ const SubCategoryTable = () => {
   const dispatch = useDispatch();
   const [selectedSubCat, setSelectedSubCat] = useState({});
   const [keyword, setKeyword] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const [showAddSubCat, setShowAddSubCat] = useState(false);
   const [showEditSubCat, setShowEditSubCat] = useState(false);
 
   const { subCats } = useSelector((state) => state.subCatInfo);
-
   const { cats } = useSelector((state) => state.catInfo);
 
   useEffect(() => {
@@ -65,7 +65,14 @@ const SubCategoryTable = () => {
     <>
       <div className="d-flex justify-content-between align-items-center w-100 mb-3">
         <h2 className="me-auto">We have {subCats.length} Sub-Categories!</h2>
-        <LocalSearch keyword={keyword} setKeyword={setKeyword} />
+        <LocalSearch
+          keyword={keyword}
+          setKeyword={setKeyword}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          type="subCategories"
+          categories={cats}
+        />
       </div>
 
       <Button
@@ -105,6 +112,10 @@ const SubCategoryTable = () => {
         <tbody>
           {subCats
             .filter(searched(keyword))
+            .filter(
+              (subCat) =>
+                categoryFilter === "" || subCat.parent === categoryFilter
+            )
             .map(({ _id, status, title, slug, parent }, i) => (
               <tr key={_id} className={getRowClass(status)}>
                 <td>{i + 1}</td>
