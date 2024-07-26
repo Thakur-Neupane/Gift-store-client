@@ -7,8 +7,9 @@ const LocalSearch = ({
   setCategoryFilter,
   subCategoryFilter,
   setSubCategoryFilter,
-  categories,
-  subCategories,
+  categories = [],
+  subCategories = [],
+  type, // 'products', 'subCategories', 'categories'
 }) => {
   const handleSearchChange = (e) => {
     setKeyword(e.target.value.toLowerCase());
@@ -16,7 +17,9 @@ const LocalSearch = ({
 
   const handleCategoryChange = (e) => {
     setCategoryFilter(e.target.value);
-    setSubCategoryFilter(""); // Reset subcategory filter when category changes
+    if (type === "products") {
+      setSubCategoryFilter(""); // Reset subcategory filter when category changes
+    }
   };
 
   const handleSubCategoryChange = (e) => {
@@ -33,34 +36,51 @@ const LocalSearch = ({
         onChange={handleSearchChange}
         style={{ width: "200px" }}
       />
-      <select
-        className="form-control mb-2 mr-2"
-        onChange={handleCategoryChange}
-        value={categoryFilter}
-        style={{ width: "200px" }}
-      >
-        <option value="">Filter By Categories</option>
-        {categories &&
-          categories.map((cat) => (
+      {type === "products" && (
+        <>
+          <select
+            className="form-control mb-2 mr-2"
+            onChange={handleCategoryChange}
+            value={categoryFilter}
+            style={{ width: "200px" }}
+          >
+            <option value="">Filter By Categories</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.title}
+              </option>
+            ))}
+          </select>
+          <select
+            className="form-control mb-2"
+            onChange={handleSubCategoryChange}
+            value={subCategoryFilter}
+            style={{ width: "200px" }}
+          >
+            <option value="">Filter By Subcategories</option>
+            {subCategories.map((subCat) => (
+              <option key={subCat._id} value={subCat._id}>
+                {subCat.title}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+      {type === "subCategories" && (
+        <select
+          className="form-control mb-2"
+          onChange={handleCategoryChange}
+          value={categoryFilter}
+          style={{ width: "200px" }}
+        >
+          <option value="">Filter By Categories</option>
+          {categories.map((cat) => (
             <option key={cat._id} value={cat._id}>
               {cat.title}
             </option>
           ))}
-      </select>
-      <select
-        className="form-control mb-2"
-        onChange={handleSubCategoryChange}
-        value={subCategoryFilter}
-        style={{ width: "200px" }}
-      >
-        <option value="">Filter By Subcategories</option>
-        {subCategories &&
-          subCategories.map((subCat) => (
-            <option key={subCat._id} value={subCat._id}>
-              {subCat.title}
-            </option>
-          ))}
-      </select>
+        </select>
+      )}
     </div>
   );
 };
