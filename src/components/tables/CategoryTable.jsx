@@ -52,7 +52,11 @@ export const CategoryTable = () => {
     <>
       <div className="d-flex justify-content-between align-items-center w-100 mb-3">
         <h2 className="me-auto">We have {cats.length} Categories!</h2>
-        <LocalSearch keyword={keyword} setKeyword={setKeyword} />
+        <LocalSearch
+          keyword={keyword}
+          setKeyword={setKeyword}
+          type="categories"
+        />
       </div>
 
       {showAddSubCat && (
