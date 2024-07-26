@@ -105,6 +105,7 @@ export const ProductTable = () => {
             setSubCategoryFilter={setSubCategoryFilter}
             categories={cats}
             subCategories={subCats}
+            type="products"
           />
         </div>
       </div>
