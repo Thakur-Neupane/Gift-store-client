@@ -9,8 +9,6 @@ import {
 import { getCategoryAction } from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
 import LocalSearch from "../forms/LocalSearch";
-import EditProduct from "../forms/EditProduct";
-import NewProduct from "../../pages/product/NewProduct";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 export const ProductTable = () => {
@@ -136,6 +134,7 @@ export const ProductTable = () => {
         <FaPlus /> Add New Product
       </Button>
 
+      {/* Optional AddNewProduct Component */}
       {showAddProduct && (
         <AddNewProduct
           setShow={setShowAddProduct}
@@ -144,6 +143,7 @@ export const ProductTable = () => {
         />
       )}
 
+      {/* Optional EditProduct Component */}
       {showEditProduct && (
         <EditProduct
           selectedProduct={selectedProduct}
@@ -167,7 +167,7 @@ export const ProductTable = () => {
             <th>Qty</th>
             <th>Sales Price</th>
             <th>Color</th>
-            <th>Actions</th>
+            <th>Actions</th> {/* Updated column header */}
           </tr>
         </thead>
         <tbody>
