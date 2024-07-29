@@ -103,7 +103,7 @@ const SubCategoryTable = () => {
           <tr>
             <th>#</th>
             <th>Status</th>
-            <th>Title</th>
+            <th>Sub-Category Name</th>
             <th>Slug</th>
             <th>Parent Category</th>
             <th>Actions</th>

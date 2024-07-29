@@ -76,7 +76,7 @@ export const CategoryTable = () => {
           <tr>
             <th>#</th>
             <th>Status</th>
-            <th>Title</th>
+            <th>Category Name</th>
             <th>Slug</th>
             <th>Actions</th>
           </tr>
