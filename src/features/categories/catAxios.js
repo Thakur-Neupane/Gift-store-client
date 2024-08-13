@@ -60,3 +60,13 @@ export const updateCategory = (slug, category) => {
 
   return apiProcessor(obj);
 };
+
+export const getCategorySubs = (_id) => {
+  const obj = {
+    url: `${catEP}/sub-category/${_id}`,
+    method: "get",
+    isPrivate: true,
+  };
+
+  return apiProcessor(obj);
+};

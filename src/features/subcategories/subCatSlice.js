@@ -1,19 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  subCats: [],
-};
-
-const subCatSlice = createSlice({
-  name: "subCategory",
-  initialState,
+const subCatInfo = createSlice({
+  name: "subCatInfo",
+  initialState: {
+    subCats: [], // Initial state for subcategories
+  },
   reducers: {
-    setSubCats: (state, { payload }) => {
-      state.subCats = payload;
+    setSubCats: (state, action) => {
+      state.subCats = action.payload;
     },
   },
 });
 
-export const { setSubCats } = subCatSlice.actions;
-
-export default subCatSlice.reducer;
+export const { setSubCats } = subCatInfo.actions;
+export default subCatInfo.reducer;

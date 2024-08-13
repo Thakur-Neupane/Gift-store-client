@@ -1,6 +1,7 @@
 import {
   deleteCategory,
   getAllCategories,
+  getCategorySubs,
   postNewCategory,
   updateCategory,
 } from "./catAxios";
@@ -57,5 +58,17 @@ export const deleteCategoryAction = (slug) => async (dispatch) => {
     }
   } catch (error) {
     console.error("Error deleting category:", error);
+  }
+};
+
+export const getCategorySubsAction = (_id) => async (dispatch) => {
+  try {
+    const response = await getCategorySubs(_id);
+
+    if (response.status === "success") {
+      dispatch(setSubCats(response.subCategories));
+    }
+  } catch (error) {
+    console.error("Error fetching subcategories:", error);
   }
 };

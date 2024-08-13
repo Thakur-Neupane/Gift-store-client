@@ -3,18 +3,27 @@ import { Button, Table, Pagination } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getProductAction } from "../../features/products/productAction";
-import { getCategoryAction } from "../../features/categories/catAction";
+import {
+  getCategoryAction,
+  getCategorySubsAction,
+} from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
-import LocalSearch from "../forms/LocalSearch";
+import ProductSearch from "../forms/ProductSearch";
+
+const PRODUCTS_PER_PAGE = 10;
 
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [subCategoryFilter, setSubCategoryFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { products } = useSelector((state) => state.productInfo);
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
+
+  const [subCatMap, setSubCatMap] = useState({});
 
   const dispatch = useDispatch();
 
@@ -24,36 +33,15 @@ export const ProductTable = () => {
     dispatch(getSubCategoryAction());
   }, [dispatch]);
 
+  // Create a map of subcategory IDs to titles for quick lookup
   useEffect(() => {
-    setDisplayProd(products);
-  }, [products]);
+    const map = subCats.reduce((acc, subCat) => {
+      acc[subCat._id] = subCat.title;
+      return acc;
+    }, {});
+    setSubCatMap(map);
+  }, [subCats]);
 
-  // Function to get parent category title from ID
-  const getParentCategoryTitle = (parentId) => {
-    const parentCat = cats.find((cat) => cat._id === parentId);
-    return parentCat ? parentCat.title : "N/A";
-  };
-
-  // Helper function to get sub-category titles based on IDs
-  const getSubCategoryTitle = (prod, subCats) => {
-    if (
-      !subCats ||
-      subCats.length === 0 ||
-      !prod.subCategories ||
-      prod.subCategories.length === 0
-    ) {
-      return "N/A";
-    }
-
-    const subCategoryTitles = prod.subCategories.map((subCatId) => {
-      const subCat = subCats.find((sc) => sc._id === subCatId);
-      return subCat ? subCat.title : "N/A";
-    });
-
-    return subCategoryTitles.join(", ");
-  };
-
-  // Filter products based on search keyword, category filter, and subcategory filter
   useEffect(() => {
     let filteredProducts = products;
 
@@ -76,27 +64,24 @@ export const ProductTable = () => {
     }
 
     setDisplayProd(filteredProducts);
-  }, [products, keyword, categoryFilter, subCategoryFilter, subCats]);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [products, keyword, categoryFilter, subCategoryFilter]);
 
-  // Calculate the count of products found based on filtered products
-  const productsFound = displayProd.length;
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const paginatedProducts = displayProd.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(displayProd.length / PRODUCTS_PER_PAGE);
 
-  // Pagination example (adjust as per your pagination logic)
-  let items = [];
-  for (let number = 1; number <= 5; number++) {
-    items.push(
-      <Pagination.Item key={number} active={number === 1}>
-        {number}
-      </Pagination.Item>
-    );
-  }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center my-4">
-        <div>{productsFound} Products Found</div>
+        <div>{displayProd.length} Products Found</div>
         <div>
-          <LocalSearch
+          <ProductSearch
             keyword={keyword}
             setKeyword={setKeyword}
             categoryFilter={categoryFilter}
@@ -104,8 +89,9 @@ export const ProductTable = () => {
             subCategoryFilter={subCategoryFilter}
             setSubCategoryFilter={setSubCategoryFilter}
             categories={cats}
-            subCategories={subCats}
+            subCategories={subCats.filter((sc) => sc.parent === categoryFilter)}
             type="products"
+            disableSubCategory={!categoryFilter}
           />
         </div>
       </div>
@@ -117,7 +103,6 @@ export const ProductTable = () => {
             <th>Status</th>
             <th>Thumbnail</th>
             <th>Name</th>
-            <th>Slug</th>
             <th>SKU</th>
             <th>Category</th>
             <th>Sub Category</th>
@@ -130,24 +115,30 @@ export const ProductTable = () => {
           </tr>
         </thead>
         <tbody>
-          {displayProd.map((prod, index) => (
+          {paginatedProducts.map((prod, index) => (
             <tr
               key={prod._id}
               className={
                 prod.status === "active" ? "table-success" : "table-danger"
               }
             >
-              <td>{index + 1}</td>
+              <td>{startIndex + index + 1}</td>
               <td>{prod.status === "active" ? "Active" : "Inactive"}</td>
               <td>
                 <img src={prod.thumbnail} width="70px" alt="" />
               </td>
               <td>{prod.name}</td>
-              <td>{prod.slug}</td>
               <td>{prod.sku}</td>
-              <td>{getParentCategoryTitle(prod.category)}</td>
-              <td>{getSubCategoryTitle(prod, subCats)}</td>{" "}
-              {/* Ensure subCats is passed */}
+              <td>
+                {cats.find((cat) => cat._id === prod.category)?.title || "N/A"}
+              </td>
+              <td>
+                {prod.subCategories.length > 0
+                  ? prod.subCategories
+                      .map((id) => subCatMap[id] || "N/A")
+                      .join(", ")
+                  : "N/A"}
+              </td>
               <td>
                 {prod.description.length > 50
                   ? `${prod.description.slice(0, 50)}...`
@@ -178,7 +169,17 @@ export const ProductTable = () => {
       </Table>
 
       <div>
-        <Pagination>{items}</Pagination>
+        <Pagination>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
       </div>
     </div>
   );
