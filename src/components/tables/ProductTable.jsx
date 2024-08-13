@@ -2,24 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Button, Table, Pagination } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  getProductAction,
-  deleteProductAction,
-} from "../../features/products/productAction";
+import { getProductAction } from "../../features/products/productAction";
 import { getCategoryAction } from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
 import LocalSearch from "../forms/LocalSearch";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 export const ProductTable = () => {
   const [displayProd, setDisplayProd] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [subCategoryFilter, setSubCategoryFilter] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState({});
-  const [showAddProduct, setShowAddProduct] = useState(false);
-  const [showEditProduct, setShowEditProduct] = useState(false);
-
   const { products } = useSelector((state) => state.productInfo);
   const { cats } = useSelector((state) => state.catInfo);
   const { subCats } = useSelector((state) => state.subCatInfo);
@@ -36,11 +28,13 @@ export const ProductTable = () => {
     setDisplayProd(products);
   }, [products]);
 
+  // Function to get parent category title from ID
   const getParentCategoryTitle = (parentId) => {
     const parentCat = cats.find((cat) => cat._id === parentId);
     return parentCat ? parentCat.title : "N/A";
   };
 
+  // Helper function to get sub-category titles based on IDs
   const getSubCategoryTitle = (prod, subCats) => {
     if (
       !subCats ||
@@ -59,6 +53,7 @@ export const ProductTable = () => {
     return subCategoryTitles.join(", ");
   };
 
+  // Filter products based on search keyword, category filter, and subcategory filter
   useEffect(() => {
     let filteredProducts = products;
 
@@ -83,21 +78,10 @@ export const ProductTable = () => {
     setDisplayProd(filteredProducts);
   }, [products, keyword, categoryFilter, subCategoryFilter, subCats]);
 
-  const handleOnEdit = (product) => {
-    setSelectedProduct(product);
-    setShowEditProduct(true);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      dispatch(deleteProductAction(id)).then(() => {
-        dispatch(getProductAction());
-      });
-    }
-  };
-
+  // Calculate the count of products found based on filtered products
   const productsFound = displayProd.length;
 
+  // Pagination example (adjust as per your pagination logic)
   let items = [];
   for (let number = 1; number <= 5; number++) {
     items.push(
@@ -126,31 +110,6 @@ export const ProductTable = () => {
         </div>
       </div>
 
-      <Button
-        className="mb-2"
-        variant="primary"
-        onClick={() => setShowAddProduct(true)}
-      >
-        <FaPlus /> Add New Product
-      </Button>
-
-      {/* Optional AddNewProduct Component */}
-      {showAddProduct && (
-        <AddNewProduct
-          setShow={setShowAddProduct}
-          selectedProduct={selectedProduct}
-          isFromProductTable={false}
-        />
-      )}
-
-      {/* Optional EditProduct Component */}
-      {showEditProduct && (
-        <EditProduct
-          selectedProduct={selectedProduct}
-          setShow={setShowEditProduct}
-        />
-      )}
-
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -167,7 +126,7 @@ export const ProductTable = () => {
             <th>Qty</th>
             <th>Sales Price</th>
             <th>Color</th>
-            <th>Actions</th> {/* Updated column header */}
+            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -187,7 +146,8 @@ export const ProductTable = () => {
               <td>{prod.slug}</td>
               <td>{prod.sku}</td>
               <td>{getParentCategoryTitle(prod.category)}</td>
-              <td>{getSubCategoryTitle(prod, subCats)}</td>
+              <td>{getSubCategoryTitle(prod, subCats)}</td>{" "}
+              {/* Ensure subCats is passed */}
               <td>
                 {prod.description.length > 50
                   ? `${prod.description.slice(0, 50)}...`
@@ -208,16 +168,9 @@ export const ProductTable = () => {
               </td>
               <td>{prod.color}</td>
               <td>
-                <Button
-                  onClick={() => handleOnEdit(prod)}
-                  variant="warning"
-                  className="me-2"
-                >
-                  <FaEdit />
-                </Button>
-                <Button onClick={() => handleDelete(prod._id)} variant="danger">
-                  <FaTrash />
-                </Button>
+                <Link to={`/admin/product/edit/${prod._id}`}>
+                  <Button variant="warning">Edit</Button>
+                </Link>
               </td>
             </tr>
           ))}

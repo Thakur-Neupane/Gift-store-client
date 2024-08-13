@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import bgImage from "../../assets/bg.png";
 import patternImage from "../../assets/pattern.png";
-// import { FaGift } from "react-icons/fa6";
+import { FaGift } from "react-icons/fa6";
 
 export const AdminLayout = () => {
   return (
@@ -16,7 +16,7 @@ export const AdminLayout = () => {
           backgroundImage: `url(${bgImage})`,
         }}
       >
-        {/* <div className="text-animation mb-3" style={{ color: "#E81135" }}>
+        <div className="text-animation mb-3" style={{ color: "#E81135" }}>
           <span>R</span>
           <span>S</span>
           <span>&nbsp;</span>
@@ -37,7 +37,7 @@ export const AdminLayout = () => {
           <span>
             <FaGift />
           </span>
-        </div> */}
+        </div>
         <hr />
 
         <Sidebar />

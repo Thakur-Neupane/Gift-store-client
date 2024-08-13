@@ -28,9 +28,14 @@ export const createNewSubCategoryAction = (subCatData) => async (dispatch) => {
     if (response.status === "success") {
       dispatch(getSubCategoryAction()); // Refresh subcategories after insert
       return true;
+    } else {
+      // Handle unsuccessful response
+      console.error("Failed to create sub-category:", response.message);
+      return false;
     }
   } catch (error) {
     console.error("Error creating Sub-category:", error);
+    return false;
   }
 };
 
