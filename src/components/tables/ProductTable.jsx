@@ -3,10 +3,7 @@ import { Button, Table, Pagination } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getProductAction } from "../../features/products/productAction";
-import {
-  getCategoryAction,
-  getCategorySubsAction,
-} from "../../features/categories/catAction";
+import { getCategoryAction } from "../../features/categories/catAction";
 import { getSubCategoryAction } from "../../features/subcategories/subCatAction";
 import ProductSearch from "../forms/ProductSearch";
 
@@ -33,7 +30,6 @@ export const ProductTable = () => {
     dispatch(getSubCategoryAction());
   }, [dispatch]);
 
-  // Create a map of subcategory IDs to titles for quick lookup
   useEffect(() => {
     const map = subCats.reduce((acc, subCat) => {
       acc[subCat._id] = subCat.title;
@@ -64,7 +60,7 @@ export const ProductTable = () => {
     }
 
     setDisplayProd(filteredProducts);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   }, [products, keyword, categoryFilter, subCategoryFilter]);
 
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;

@@ -14,9 +14,8 @@ import {
 } from "../../components/common/custom-input/CustomInput";
 
 const NewProduct = () => {
-  // Initialize the form state with default values
   const { form, setForm, handleOnChange } = useForm({
-    category: "", // Matches Mongoose schema field name
+    category: "",
     subCatId: "",
     name: "",
     sku: "",
@@ -43,7 +42,6 @@ const NewProduct = () => {
   }, [dispatch, cats]);
 
   useEffect(() => {
-    // Fetch subcategories if category (formerly parentCatId) changes and is valid
     if (form.category) {
       dispatch(getCategorySubsAction(form.category));
     }
@@ -51,31 +49,26 @@ const NewProduct = () => {
 
   const handleCategoryChange = (e) => {
     const category = e.target.value;
-
-    // Set the selected category ID in the form state
-    setForm({ ...form, category });
-
-    // Fetch the subcategories based on the selected category ID
+    setForm({ ...form, category, subCatId: "" }); // Reset subCatId when category changes
     if (category) {
       dispatch(getCategorySubsAction(category));
     }
   };
 
+  const handleSubCatChange = (e) => {
+    const subCatId = e.target.value;
+    setForm({ ...form, subCatId });
+  };
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
-
-    // Prepare form data directly from the state
     const formData = {
       ...form,
-      subCategories: form.subCategories ? form.subCategories.split(",") : [],
+      subCategories: form.subCatId ? [form.subCatId] : [], // Ensure it's an array
     };
-
-    // Dispatch the action with the form data
     dispatch(createNewProductAction(formData));
-
-    // Reset the form after submission
     setForm({
-      parentCatId: "",
+      category: "",
       subCatId: "",
       name: "",
       sku: "",
@@ -92,7 +85,6 @@ const NewProduct = () => {
     });
   };
 
-  // Only show active categories
   const catOptions = cats
     .filter((p) => p.status === "active")
     .map(({ title, _id }) => ({
@@ -100,7 +92,6 @@ const NewProduct = () => {
       value: _id,
     }));
 
-  // Only show subcategories related to the selected category
   const subCatOptions = subCats
     .filter((sub) => sub.parent === form.category)
     .map(({ title, _id }) => ({
@@ -125,7 +116,7 @@ const NewProduct = () => {
       required: true,
       isSelectType: true,
       options: subCatOptions,
-      disabled: !form.category,
+      onChange: handleSubCatChange,
     },
     {
       label: "Name",
@@ -134,7 +125,6 @@ const NewProduct = () => {
       required: true,
       placeholder: "Phones",
     },
-
     {
       label: "SKU",
       name: "sku",
@@ -215,35 +205,30 @@ const NewProduct = () => {
     <div>
       <h2>Create new product</h2>
       <hr />
-
       <Link to="/admin/products">
         <Button variant="secondary">&lt; Back</Button>
       </Link>
       <Form onSubmit={handleOnSubmit}>
         {inputs.map((item, i) => {
-          if (item.name === "category") {
-            return (
-              <CustomSelect key={i} {...item} onChange={handleCategoryChange} />
-            );
-          }
           return item.isSelectType ? (
             <CustomSelect
               key={i}
               {...item}
-              onChange={handleOnChange}
+              onChange={
+                item.name === "subCatId"
+                  ? handleSubCatChange
+                  : handleCategoryChange
+              }
               options={item.name === "subCatId" ? subCatOptions : item.options}
-              disabled={item.name === "subCatId" && !form.category}
             />
           ) : (
             <CustomInput key={i} {...item} onChange={handleOnChange} />
           );
         })}
-
         <Form.Group controlId="formImages">
           <Form.Label>Upload Images</Form.Label>
           <Form.Control type="file" multiple />
         </Form.Group>
-
         <div className="d-grid mt-3">
           <Button type="submit">Submit</Button>
         </div>
