@@ -8,6 +8,28 @@
   object-fit: cover;
 }
 
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-item {
+  position: relative;
+  margin: 10px;
+}
+
+.image-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 5px;
+}
+
+.image-actions .btn {
+  font-size: 14px;
+  padding: 5px;
+}
 @keyframes slide {
   0% {
     transform: translateX(100%);

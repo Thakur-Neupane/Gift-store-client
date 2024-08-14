@@ -1,19 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Resizer from "react-image-file-resizer";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaCheck } from "react-icons/fa";
 import { Spinner } from "react-bootstrap";
 
 const MAX_IMAGES = 6;
+const IMAGE_WIDTH = 720;
+const IMAGE_HEIGHT = 720;
+const IMAGE_QUALITY = 80;
 const MAX_SIZE_MB = 10;
-const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 10 MB in bytes
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 const FileUpload = ({ setImages, images, setThumbnail }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); // To store error messages
-
+  const [error, setError] = useState("");
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const token = useSelector((state) => state.userInfo.token);
+
+  useEffect(() => {
+    if (
+      selectedThumbnail &&
+      !images.find((img) => img.public_id === selectedThumbnail.public_id)
+    ) {
+      setThumbnail("");
+      setSelectedThumbnail(null);
+    }
+  }, [images, selectedThumbnail, setThumbnail]);
+
+  const resizeImage = (file) => {
+    return new Promise((resolve, reject) => {
+      Resizer.imageFileResizer(
+        file,
+        IMAGE_WIDTH,
+        IMAGE_HEIGHT,
+        "JPEG",
+        IMAGE_QUALITY,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "base64"
+      );
+    });
+  };
 
   const fileUploadAndResize = async (e) => {
     const files = e.target.files;
@@ -40,180 +70,168 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
 
       try {
         setLoading(true);
-        // Resize the image
-        await new Promise((resolve, reject) => {
-          Resizer.imageFileResizer(
-            file,
-            720, // width
-            720, // height
-            "JPEG",
-            80, // quality
-            0,
-            (uri) => resolve(uri),
-            "base64"
-          );
-        })
-          .then(async (uri) => {
-            try {
-              // Upload the resized image
-              const { data } = await axios.post(
-                `${
-                  import.meta.env.VITE_APP_SERVR_ROOT
-                }/api/v1/cloudinary/uploadimages`,
-                { images: [uri] },
-                {
-                  headers: { authtoken: token },
-                }
-              );
-              const newImages = data.map((img) => ({
-                ...img,
-                size: file.size,
-              }));
-              allUploadFiles = [...allUploadFiles, ...newImages];
-              setImages(allUploadFiles);
 
-              // Set the first image as the thumbnail if it's the first upload
-              if (allUploadFiles.length === 1) {
-                setThumbnail(newImages[0].url);
-              }
-              setError(""); // Clear any previous errors
-            } catch (uploadError) {
-              console.error(
-                "Image upload error:",
-                uploadError.response
-                  ? uploadError.response.data
-                  : uploadError.message
-              );
-              setError("Error uploading image. Please try again.");
-            } finally {
-              setLoading(false);
-            }
-          })
-          .catch((resizeError) => {
-            console.error("Image resizing error:", resizeError);
-            setError("Error resizing image. Please try again.");
-            setLoading(false);
-          });
-      } catch (err) {
-        console.error("General error:", err);
-        setError("Unexpected error occurred. Please try again.");
+        // Resize the image
+        const uri = await resizeImage(file);
+
+        // Generate a unique identifier (could be done using a hash function or the file's content)
+        const imageIdentifier = uri; // You may need a better way to create a unique identifier
+
+        // Check if the image already exists
+        if (allUploadFiles.some((img) => img.url === imageIdentifier)) {
+          setError("This image has already been uploaded.");
+          setLoading(false);
+          return;
+        }
+
+        try {
+          // Upload the resized image
+          const { data } = await axios.post(
+            `${
+              import.meta.env.VITE_APP_SERVR_ROOT
+            }/api/v1/cloudinary/uploadimages`,
+            { images: [uri] },
+            { headers: { authtoken: token } }
+          );
+
+          const newImages = data.map((img) => ({
+            ...img,
+            size: file.size,
+          }));
+
+          allUploadFiles = [...allUploadFiles, ...newImages];
+          setImages(allUploadFiles);
+
+          if (allUploadFiles.length === 1) {
+            setThumbnail(newImages[0].url);
+            setSelectedThumbnail(newImages[0]);
+          }
+
+          setError("");
+        } catch (uploadError) {
+          setError("Error uploading image. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      } catch (resizeError) {
+        setError("Error resizing image. Please try again.");
         setLoading(false);
       }
     }
   };
 
-  const handleImageRemove = async (public_id) => {
+  const handleImageRemove = async (public_id, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     try {
       setLoading(true);
       await axios.post(
         `${import.meta.env.VITE_APP_SERVR_ROOT}/api/v1/cloudinary/removeimages`,
         { public_id },
-        {
-          headers: { authtoken: token },
-        }
+        { headers: { authtoken: token } }
       );
       const updatedImages = images.filter(
         (item) => item.public_id !== public_id
       );
       setImages(updatedImages);
 
-      // Update the thumbnail if the removed image was the thumbnail
       if (
-        images.find((img) => img.public_id === public_id)?.url === thumbnail
+        images.find((img) => img.public_id === public_id)?.url ===
+        selectedThumbnail?.url
       ) {
         if (updatedImages.length > 0) {
-          setThumbnail(updatedImages[0].url); // Set the first remaining image as thumbnail
+          const newThumbnail = updatedImages[0];
+          setThumbnail(newThumbnail.url);
+          setSelectedThumbnail(newThumbnail);
         } else {
-          setThumbnail(""); // Clear thumbnail if no images left
+          setThumbnail("");
+          setSelectedThumbnail(null);
         }
       }
     } catch (err) {
-      console.error(
-        "Image remove error:",
-        err.response ? err.response.data : err.message
-      );
-      setError("Error removing image. Please try again.");
+      console.error("Image remove error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleThumbnailSelect = (image, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (selectedThumbnail?.public_id === image.public_id) return;
+
+    setThumbnail(image.url);
+    setSelectedThumbnail(image);
+  };
+
   return (
     <div className="row">
-      {error && (
-        <div className="col-12 mb-3">
-          <div className="alert alert-danger" role="alert">
-            {error}
+      <div className="col-12 mb-3">
+        {images.length > 0 && (
+          <div className="image-gallery">
+            {images.map((image) => (
+              <div key={image.public_id} className="image-item">
+                <img
+                  src={image.url}
+                  alt="Uploaded"
+                  style={{
+                    width: "150px",
+                    height: "100px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    border: "2px solid #ccc",
+                  }}
+                />
+                <div className="image-actions">
+                  <button
+                    type="button"
+                    className={`btn ${
+                      selectedThumbnail?.public_id === image.public_id
+                        ? "btn-success"
+                        : "btn-outline-primary"
+                    }`}
+                    onClick={(e) => handleThumbnailSelect(image, e)}
+                  >
+                    <FaCheck />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={(e) => handleImageRemove(image.public_id, e)}
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
-      {/* Display the first image as a thumbnail */}
-      {images.length > 0 && (
-        <div className="col-md-3 mb-3 position-relative">
-          <img
-            src={images[0].url}
-            alt="Thumbnail"
-            style={{
-              width: "100%",
-              height: "150px", // Fixed size for the thumbnail
-              objectFit: "cover",
-              borderRadius: "8px",
-              border: "2px solid #ccc",
-            }}
-          />
-          <p style={{ textAlign: "center", marginTop: "5px" }}>Thumbnail</p>
-        </div>
-      )}
-      {/* Display remaining images with fixed size */}
-      {images.slice(1).map((image) => (
-        <div key={image.public_id} className="col-md-3 mb-3 position-relative">
-          <img
-            src={image.url}
-            alt="Uploaded"
-            style={{
-              width: "100%",
-              height: "150px", // Fixed size for the image
-              objectFit: "cover",
-              borderRadius: "8px",
-              border: "2px solid #ccc",
-            }}
-          />
-          <button
-            className="btn btn-danger position-absolute top-0 end-0 m-2 rounded-circle p-2 d-flex align-items-center justify-content-center"
-            onClick={() => handleImageRemove(image.public_id)}
-            style={{
-              zIndex: 1,
-              border: "none",
-              backgroundColor: "#dc3545",
-              color: "white",
-              fontSize: "16px",
-            }}
-          >
-            <FaTrashAlt />
-          </button>
-        </div>
-      ))}
-      {/* File input */}
-      <label className="btn btn-primary btn-raised">
-        {loading ? (
-          <Spinner
-            animation="border"
-            role="status"
-            style={{ width: "24px", height: "24px" }}
-          >
-            <span className="visually-hidden">Uploading...</span>
-          </Spinner>
-        ) : (
-          "Choose Files"
         )}
-        <input
-          type="file"
-          multiple
-          hidden
-          accept="image/*"
-          onChange={fileUploadAndResize}
-        />
-      </label>
+      </div>
+      <div className="col-12">
+        <label className="btn btn-primary btn-raised">
+          {loading ? (
+            <Spinner
+              animation="border"
+              role="status"
+              style={{ width: "24px", height: "24px" }}
+            >
+              <span className="visually-hidden">Uploading...</span>
+            </Spinner>
+          ) : (
+            "Choose Files"
+          )}
+          <input
+            type="file"
+            multiple
+            hidden
+            accept="image/*"
+            onChange={fileUploadAndResize}
+          />
+        </label>
+        {error && <p className="text-danger mt-2">{error}</p>}
+      </div>
     </div>
   );
 };

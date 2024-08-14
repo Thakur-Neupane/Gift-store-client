@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Button, Form, Alert } from "react-bootstrap";
 import useForm from "../../Hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -34,6 +34,7 @@ const NewProduct = () => {
 
   const [images, setImages] = useState([]);
   const [thumbnail, setThumbnail] = useState(""); // Local state for thumbnail
+  const [errors, setErrors] = useState({}); // State for form validation errors
 
   const dispatch = useDispatch();
   const cats = useSelector((state) => state.catInfo.cats);
@@ -64,8 +65,42 @@ const NewProduct = () => {
     setForm({ ...form, subCatId });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const currentDate = new Date();
+
+    if (
+      form.salesPrice &&
+      form.price &&
+      parseFloat(form.salesPrice) >= parseFloat(form.price)
+    ) {
+      newErrors.salesPrice = "Sales Price must be less than Price.";
+    }
+
+    if (form.salesStart && new Date(form.salesStart) < currentDate) {
+      newErrors.salesStart = "Sales Start Date cannot be in the past.";
+    }
+
+    if (
+      form.salesStart &&
+      form.salesEnd &&
+      new Date(form.salesEnd) <= new Date(form.salesStart)
+    ) {
+      newErrors.salesEnd = "Sales End Date must be after Sales Start Date.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return false;
+    }
+    return true;
+  };
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return; // Stop submission if validation fails
+
     const formData = {
       ...form,
       subCategories: form.subCatId ? [form.subCatId] : [], // Ensure it's an array
@@ -91,6 +126,7 @@ const NewProduct = () => {
     });
     setImages([]); // Clear images after submit
     setThumbnail(""); // Clear thumbnail after submit
+    setErrors({}); // Clear errors after submit
   };
 
   const catOptions = cats
@@ -211,6 +247,13 @@ const NewProduct = () => {
         <Button variant="secondary">&lt; Back</Button>
       </Link>
       <Form onSubmit={handleOnSubmit}>
+        {errors.salesPrice && (
+          <Alert variant="danger">{errors.salesPrice}</Alert>
+        )}
+        {errors.salesStart && (
+          <Alert variant="danger">{errors.salesStart}</Alert>
+        )}
+        {errors.salesEnd && <Alert variant="danger">{errors.salesEnd}</Alert>}
         {inputs.map((item, i) => {
           return item.isSelectType ? (
             <CustomSelect

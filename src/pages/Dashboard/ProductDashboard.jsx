@@ -7,7 +7,6 @@ import {
   Modal,
   Pagination,
   Form,
-  Carousel,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -39,15 +38,21 @@ const ProductsDashboard = () => {
     dispatch(getSubCategoryAction());
   }, [dispatch]);
 
-  const handleDelete = (productId) => {
-    setProductToDelete(productId);
+  const handleDelete = (_id) => {
+    setProductToDelete(_id);
     setShowConfirmation(true);
   };
 
   const confirmDelete = () => {
-    dispatch(deleteProductAction(productToDelete));
-    setShowConfirmation(false);
-    setProductToDelete(null);
+    dispatch(deleteProductAction(productToDelete))
+      .then(() => {
+        setShowConfirmation(false);
+        setProductToDelete(null);
+      })
+      .catch((error) => {
+        console.error("Error deleting product:", error);
+        // Handle error
+      });
   };
 
   const cancelDelete = () => {

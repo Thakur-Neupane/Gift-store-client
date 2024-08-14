@@ -12,9 +12,7 @@ const ProductCard = ({ product, onDelete }) => {
     <Card>
       <Card.Img
         variant="top"
-        src={
-          product.images.length > 0 ? product.images[0].url : "/placeholder.png"
-        }
+        src={product.thumbnail || "/placeholder.png"} // Use thumbnail or placeholder
         style={{ height: "200px", objectFit: "cover" }}
         alt={product.name}
       />

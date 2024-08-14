@@ -29,25 +29,29 @@ export const getProductAction = () => async (dispatch) => {
   }
 };
 
-// Action to get a single product by slug
-export const getOneProductAction = (slug) => async (dispatch) => {
+// Action to delete a product
+export const deleteProductAction = (_id) => async (dispatch) => {
   try {
-    const response = await getOneProduct(slug);
+    const response = await deleteProduct(_id);
+    if (response.status === "success") {
+      dispatch(getProductAction()); // Refresh the product list
+    } else {
+      console.error("Error deleting product:", response.message);
+    }
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+};
+
+// Action to get a single product by id
+export const getOneProductAction = (id) => async (dispatch) => {
+  try {
+    const response = await getOneProduct(id);
     if (response.status === "success") {
       dispatch(setProduct(response.product));
     }
   } catch (error) {
     console.error("Error fetching product:", error);
-  }
-};
-
-// Action to delete a product
-export const deleteProductAction = (slug) => async (dispatch) => {
-  try {
-    await deleteProduct(slug);
-    dispatch(getProductAction()); // Refresh product list after deletion
-  } catch (error) {
-    console.error("Error deleting product:", error);
   }
 };
 

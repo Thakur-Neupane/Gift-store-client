@@ -38,9 +38,9 @@ export const getOneProduct = (slug) => {
 };
 
 // Function to delete a product
-export const deleteProduct = (slug) => {
+export const deleteProduct = (_id) => {
   const obj = {
-    url: `${productEP}/${slug}`,
+    url: `${productEP}/${_id}`,
     method: "delete",
     isPrivate: true,
     showToast: true,

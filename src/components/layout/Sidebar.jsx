@@ -28,7 +28,7 @@ export const Sidebar = () => {
 
         <div className="p-2">
           <Link className="nav-link" to="/admin/products/products-dashboard">
-            ProductsDashboard
+            ProductsView
           </Link>
         </div>
         <div className="p-2">
