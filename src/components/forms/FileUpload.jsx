@@ -47,7 +47,7 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
 
   const fileUploadAndResize = async (e) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     let allUploadFiles = [...images];
     let totalSize = allUploadFiles.reduce((acc, file) => acc + file.size, 0);
@@ -74,47 +74,32 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
         // Resize the image
         const uri = await resizeImage(file);
 
-        // Generate a unique identifier (could be done using a hash function or the file's content)
-        const imageIdentifier = uri; // You may need a better way to create a unique identifier
+        // Upload the resized image
+        const { data } = await axios.post(
+          `${
+            import.meta.env.VITE_APP_SERVR_ROOT
+          }/api/v1/cloudinary/uploadimages`,
+          { images: [uri] },
+          { headers: { authtoken: token } }
+        );
 
-        // Check if the image already exists
-        if (allUploadFiles.some((img) => img.url === imageIdentifier)) {
-          setError("This image has already been uploaded.");
-          setLoading(false);
-          return;
+        const newImages = data.map((img) => ({
+          ...img,
+          size: file.size,
+        }));
+
+        allUploadFiles = [...allUploadFiles, ...newImages];
+        setImages(allUploadFiles);
+
+        if (allUploadFiles.length === 1) {
+          setThumbnail(newImages[0].url);
+          setSelectedThumbnail(newImages[0]);
         }
 
-        try {
-          // Upload the resized image
-          const { data } = await axios.post(
-            `${
-              import.meta.env.VITE_APP_SERVR_ROOT
-            }/api/v1/cloudinary/uploadimages`,
-            { images: [uri] },
-            { headers: { authtoken: token } }
-          );
-
-          const newImages = data.map((img) => ({
-            ...img,
-            size: file.size,
-          }));
-
-          allUploadFiles = [...allUploadFiles, ...newImages];
-          setImages(allUploadFiles);
-
-          if (allUploadFiles.length === 1) {
-            setThumbnail(newImages[0].url);
-            setSelectedThumbnail(newImages[0]);
-          }
-
-          setError("");
-        } catch (uploadError) {
-          setError("Error uploading image. Please try again.");
-        } finally {
-          setLoading(false);
-        }
-      } catch (resizeError) {
-        setError("Error resizing image. Please try again.");
+        setError("");
+      } catch (uploadError) {
+        setError("Error uploading image. Please try again.");
+      } finally {
         setLoading(false);
       }
     }
@@ -128,26 +113,25 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
       setLoading(true);
       await axios.post(
         `${import.meta.env.VITE_APP_SERVR_ROOT}/api/v1/cloudinary/removeimages`,
-        { public_id },
+        { public_ids: [public_id] }, // Send array of IDs for batch deletion
         { headers: { authtoken: token } }
       );
+
       const updatedImages = images.filter(
         (item) => item.public_id !== public_id
       );
       setImages(updatedImages);
 
       if (
-        images.find((img) => img.public_id === public_id)?.url ===
-        selectedThumbnail?.url
+        selectedThumbnail?.public_id === public_id &&
+        updatedImages.length > 0
       ) {
-        if (updatedImages.length > 0) {
-          const newThumbnail = updatedImages[0];
-          setThumbnail(newThumbnail.url);
-          setSelectedThumbnail(newThumbnail);
-        } else {
-          setThumbnail("");
-          setSelectedThumbnail(null);
-        }
+        const newThumbnail = updatedImages[0];
+        setThumbnail(newThumbnail.url);
+        setSelectedThumbnail(newThumbnail);
+      } else if (selectedThumbnail?.public_id === public_id) {
+        setThumbnail("");
+        setSelectedThumbnail(null);
       }
     } catch (err) {
       console.error("Image remove error:", err);

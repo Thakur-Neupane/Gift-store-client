@@ -1,34 +1,49 @@
 import React from "react";
 import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+
+// Custom styles for fixed image size
+const cardImgStyle = {
+  height: "200px",
+  objectFit: "cover",
+};
 
 const ProductCard = ({ product, onDelete }) => {
-  const handleDelete = () => {
-    onDelete(product._id);
-  };
-
   return (
-    <Card>
-      <Card.Img
-        variant="top"
-        src={product.thumbnail || "/placeholder.png"} // Use thumbnail or placeholder
-        style={{ height: "200px", objectFit: "cover" }}
-        alt={product.name}
-      />
+    <Card className="mb-4 shadow-sm">
+      <Card.Img variant="top" src={product.thumbnail} style={cardImgStyle} />
       <Card.Body>
         <Card.Title>{product.name}</Card.Title>
         <Card.Text>
-          {product.description.length > 100
-            ? product.description.substring(0, 100) + "..."
-            : product.description}
+          <strong>Price:</strong> ${product.price}
+          <br />
+          <strong>SKU:</strong> {product.sku}
+          <br />
+          <strong>Brand:</strong> {product.brand}
+          <br />
+          <strong>Color:</strong> {product.color}
+          <br />
+          <strong>Description:</strong> {product.description.substring(0, 100)}
+          {product.description.length > 100 ? "..." : ""}
         </Card.Text>
-        <Link to={`/product/${product.slug}`}>
-          <Button variant="primary">View Details</Button>
-        </Link>
-        <Button variant="danger" onClick={handleDelete} className="ms-2">
-          <FaTrashAlt />
-        </Button>
+        <div className="d-flex justify-content-between">
+          <Link
+            to={`/admin/products/view/${product._id}`}
+            className="btn btn-info"
+          >
+            <FaEye /> View
+          </Link>
+          <Link
+            to={`/admin/products/edit/${product._id}`}
+            className="btn btn-primary"
+          >
+            <FaEdit /> Edit
+          </Link>
+          <Button variant="danger" onClick={() => onDelete(product._id)}>
+            <FaTrash /> Delete
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );

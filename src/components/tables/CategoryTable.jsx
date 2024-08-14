@@ -6,7 +6,7 @@ import {
   getCategoryAction,
   deleteCategoryAction,
 } from "../../features/categories/catAction";
-import { EditCategory } from "../forms/EditCategor";
+import EditCategory from "../forms/EditCategor";
 import LocalSearch from "../forms/LocalSearch";
 import AddNewSubCategory from "../forms/AddNewSubCategory";
 import { FaEdit, FaTrash } from "react-icons/fa";

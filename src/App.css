@@ -30,6 +30,12 @@
   font-size: 14px;
   padding: 5px;
 }
+
+.carousel-item img {
+  height: 400px;
+  object-fit: cover;
+}
+
 @keyframes slide {
   0% {
     transform: translateX(100%);

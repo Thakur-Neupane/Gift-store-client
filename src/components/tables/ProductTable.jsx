@@ -159,7 +159,7 @@ export const ProductTable = () => {
               </td>
               <td>{prod.color}</td>
               <td>
-                <Link to={`/admin/product/edit/${prod._id}`}>
+                <Link to={`/admin/product/edit`}>
                   <Button variant="warning">Edit</Button>
                 </Link>
               </td>

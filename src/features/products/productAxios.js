@@ -27,9 +27,9 @@ export const getAllProducts = () => {
 };
 
 // Function to get a single product by slug
-export const getOneProduct = (slug) => {
+export const getOneProduct = (_id) => {
   const obj = {
-    url: `${productEP}/${slug}`,
+    url: `${productEP}/${_id}`, // Use `_id` here
     method: "get",
     isPrivate: true,
   };
@@ -52,7 +52,7 @@ export const deleteProduct = (_id) => {
 // Function to update a product
 export const updateProduct = (slug, data) => {
   const obj = {
-    url: `${productEP}/${slug}`,
+    url: `/api/products/${id}`,
     method: "put",
     data,
     isPrivate: true,

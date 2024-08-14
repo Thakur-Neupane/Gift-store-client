@@ -21,23 +21,26 @@ import ForgetPassword from "./pages/user/ForgetPassword";
 import NewProduct from "./pages/product/NewProduct";
 import SubCategoryPage from "./pages/sub-category/SubCategory";
 import ProductsDashboard from "./pages/Dashboard/ProductDashboard";
+import EditProduct from "./components/forms/EditProduct";
+import ProductView from "./pages/product/ProductView";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(autoLoginAction());
-  }, []);
+  }, [dispatch]);
+
   return (
     <div>
       <Routes>
-        {/* public routes  */}
+        {/* Public routes */}
         <Route path="/" element={<Login />} />
         <Route path="/verify-user" element={<UserVerification />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="admin/new" element={<Register />} />
 
-        {/* private routes  */}
+        {/* Private routes */}
         <Route
           path="/"
           element={
@@ -51,6 +54,8 @@ function App() {
           <Route path="admin/sub-categories" element={<SubCategoryPage />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/products/new" element={<NewProduct />} />
+          <Route path="admin/products/view/:_id" element={<ProductView />} />
+          <Route path="admin/products/edit/:_id" element={<EditProduct />} />
           <Route
             path="admin/products/products-dashboard"
             element={<ProductsDashboard />}
@@ -58,10 +63,7 @@ function App() {
           <Route path="admin/users" element={<User />} />
           <Route path="admin/orders" element={<Orders />} />
           <Route path="admin/reviews" element={<Reviews />} />
-
           <Route path="admin/admins" element={<Admin />} />
-          {/* <Route path="admin/new" element={<Register />} /> */}
-
           <Route path="admin/profile" element={<Profile />} />
         </Route>
 

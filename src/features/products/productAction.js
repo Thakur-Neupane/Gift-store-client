@@ -44,9 +44,9 @@ export const deleteProductAction = (_id) => async (dispatch) => {
 };
 
 // Action to get a single product by id
-export const getOneProductAction = (id) => async (dispatch) => {
+export const getOneProductAction = (_id) => async (dispatch) => {
   try {
-    const response = await getOneProduct(id);
+    const response = await getOneProduct(_id);
     if (response.status === "success") {
       dispatch(setProduct(response.product));
     }
@@ -56,10 +56,12 @@ export const getOneProductAction = (id) => async (dispatch) => {
 };
 
 // Action to update a product
-export const updateProductAction = (slug, productData) => async (dispatch) => {
+export const updateProductAction = (id, productData) => async (dispatch) => {
   try {
-    await updateProduct(slug, productData);
-    dispatch(getProductAction()); // Refresh product list after update
+    const response = await updateProduct(id, productData);
+    if (response.status === "success") {
+      dispatch(getProductAction());
+    }
   } catch (error) {
     console.error("Error updating product:", error);
   }

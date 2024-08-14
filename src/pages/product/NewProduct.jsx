@@ -99,14 +99,15 @@ const NewProduct = () => {
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return; // Stop submission if validation fails
+    if (!validateForm()) return;
 
     const formData = {
       ...form,
-      subCategories: form.subCatId ? [form.subCatId] : [], // Ensure it's an array
-      images, // Add images to form data
-      thumbnail, // Add thumbnail to form data
+      subCategories: form.subCatId ? [form.subCatId] : [],
+      images, // Include images in form data
+      thumbnail, // Include thumbnail in form data
     };
+
     dispatch(createNewProductAction(formData));
     setForm({
       category: "",
