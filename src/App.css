@@ -3,6 +3,11 @@
   left: auto !important;
 }
 
+.product-card-image {
+  height: 180px;
+  object-fit: cover;
+}
+
 @keyframes slide {
   0% {
     transform: translateX(100%);

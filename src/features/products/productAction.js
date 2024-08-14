@@ -1,6 +1,13 @@
-import { getAllProducts, postNewProduct } from "./productAxios";
-import { setProducts } from "./productSlice";
+import {
+  getAllProducts,
+  postNewProduct,
+  deleteProduct,
+  getOneProduct,
+  updateProduct,
+} from "./productAxios";
+import { setProducts, setProduct } from "./productSlice";
 
+// Action to create a new product
 export const createNewProductAction = (productData) => async (dispatch) => {
   try {
     await postNewProduct(productData);
@@ -10,10 +17,46 @@ export const createNewProductAction = (productData) => async (dispatch) => {
   }
 };
 
+// Action to get all products
 export const getProductAction = () => async (dispatch) => {
-  const response = await getAllProducts();
+  try {
+    const response = await getAllProducts();
+    if (response.status === "success") {
+      dispatch(setProducts(response.products));
+    }
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+};
 
-  if (response.status === "success") {
-    dispatch(setProducts(response.products));
+// Action to get a single product by slug
+export const getOneProductAction = (slug) => async (dispatch) => {
+  try {
+    const response = await getOneProduct(slug);
+    if (response.status === "success") {
+      dispatch(setProduct(response.product));
+    }
+  } catch (error) {
+    console.error("Error fetching product:", error);
+  }
+};
+
+// Action to delete a product
+export const deleteProductAction = (slug) => async (dispatch) => {
+  try {
+    await deleteProduct(slug);
+    dispatch(getProductAction()); // Refresh product list after deletion
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+};
+
+// Action to update a product
+export const updateProductAction = (slug, productData) => async (dispatch) => {
+  try {
+    await updateProduct(slug, productData);
+    dispatch(getProductAction()); // Refresh product list after update
+  } catch (error) {
+    console.error("Error updating product:", error);
   }
 };

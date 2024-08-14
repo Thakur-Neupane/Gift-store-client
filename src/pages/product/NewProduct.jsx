@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import useForm from "../../Hooks/useForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import {
   CustomInput,
   CustomSelect,
 } from "../../components/common/custom-input/CustomInput";
+import FileUpload from "../../components/forms/FileUpload";
 
 const NewProduct = () => {
   const { form, setForm, handleOnChange } = useForm({
@@ -25,11 +26,14 @@ const NewProduct = () => {
     salesStart: "",
     salesEnd: "",
     description: "",
-    thumbnail: "",
     shipping: "",
     color: "",
     brand: "",
+    thumbnail: "", // Thumbnail URL or identifier
   });
+
+  const [images, setImages] = useState([]);
+  const [thumbnail, setThumbnail] = useState(""); // Local state for thumbnail
 
   const dispatch = useDispatch();
   const cats = useSelector((state) => state.catInfo.cats);
@@ -65,6 +69,8 @@ const NewProduct = () => {
     const formData = {
       ...form,
       subCategories: form.subCatId ? [form.subCatId] : [], // Ensure it's an array
+      images, // Add images to form data
+      thumbnail, // Add thumbnail to form data
     };
     dispatch(createNewProductAction(formData));
     setForm({
@@ -78,11 +84,13 @@ const NewProduct = () => {
       salesStart: "",
       salesEnd: "",
       description: "",
-      thumbnail: "",
       shipping: "",
       color: "",
       brand: "",
+      thumbnail: "",
     });
+    setImages([]); // Clear images after submit
+    setThumbnail(""); // Clear thumbnail after submit
   };
 
   const catOptions = cats
@@ -176,12 +184,6 @@ const NewProduct = () => {
       placeholder: "Write product details",
     },
     {
-      label: "Thumbnail",
-      name: "thumbnail",
-      type: "text",
-      placeholder: "Enter URL of product thumbnail",
-    },
-    {
       label: "Shipping",
       name: "shipping",
       type: "text",
@@ -203,7 +205,7 @@ const NewProduct = () => {
 
   return (
     <div>
-      <h2>Create new product</h2>
+      <h2>Create New Product</h2>
       <hr />
       <Link to="/admin/products">
         <Button variant="secondary">&lt; Back</Button>
@@ -225,10 +227,20 @@ const NewProduct = () => {
             <CustomInput key={i} {...item} onChange={handleOnChange} />
           );
         })}
-        <Form.Group controlId="formImages">
-          <Form.Label>Upload Images</Form.Label>
-          <Form.Control type="file" multiple />
-        </Form.Group>
+        <FileUpload
+          setImages={setImages}
+          images={images}
+          setThumbnail={setThumbnail}
+        />
+        {thumbnail && (
+          <div className="thumbnail-preview mt-3">
+            <img
+              src={thumbnail}
+              alt="Thumbnail Preview"
+              style={{ width: "200px", height: "auto" }}
+            />
+          </div>
+        )}
         <div className="d-grid mt-3">
           <Button type="submit">Submit</Button>
         </div>

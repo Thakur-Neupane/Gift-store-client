@@ -25,6 +25,12 @@ export const Sidebar = () => {
             Products
           </Link>
         </div>
+
+        <div className="p-2">
+          <Link className="nav-link" to="/admin/products/products-dashboard">
+            ProductsDashboard
+          </Link>
+        </div>
         <div className="p-2">
           <Link className="nav-link" to="/admin/users">
             Users

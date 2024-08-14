@@ -20,6 +20,7 @@ import { autoLoginAction } from "./features/users/userAction";
 import ForgetPassword from "./pages/user/ForgetPassword";
 import NewProduct from "./pages/product/NewProduct";
 import SubCategoryPage from "./pages/sub-category/SubCategory";
+import ProductsDashboard from "./pages/Dashboard/ProductDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,10 @@ function App() {
           <Route path="admin/sub-categories" element={<SubCategoryPage />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/products/new" element={<NewProduct />} />
+          <Route
+            path="admin/products/products-dashboard"
+            element={<ProductsDashboard />}
+          />
           <Route path="admin/users" element={<User />} />
           <Route path="admin/orders" element={<Orders />} />
           <Route path="admin/reviews" element={<Reviews />} />
