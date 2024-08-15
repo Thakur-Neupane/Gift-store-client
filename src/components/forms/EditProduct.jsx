@@ -147,7 +147,7 @@ const EditProduct = () => {
       images, // Add images to form data
       thumbnail, // Add thumbnail to form data
     };
-    dispatch(updateProductAction(id, formData)); // Update product action
+    dispatch(updateProductAction(_id, formData)); // Update product action
     setErrors({}); // Clear errors after submit
   };
 

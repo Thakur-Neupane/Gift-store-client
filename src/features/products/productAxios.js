@@ -50,9 +50,9 @@ export const deleteProduct = (_id) => {
 };
 
 // Function to update a product
-export const updateProduct = (slug, data) => {
+export const updateProduct = (_id, data) => {
   const obj = {
-    url: `/api/products/${id}`,
+    url: `${productEP}/update/${_id}`,
     method: "put",
     data,
     isPrivate: true,

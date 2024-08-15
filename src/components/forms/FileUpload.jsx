@@ -111,17 +111,28 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
 
     try {
       setLoading(true);
-      await axios.post(
+
+      // Correctly format the request payload
+      const payload = { public_id }; // Change this line
+      console.log("Request payload:", payload);
+
+      // Send request to remove the image
+      const response = await axios.post(
         `${import.meta.env.VITE_APP_SERVR_ROOT}/api/v1/cloudinary/removeimages`,
-        { public_ids: [public_id] }, // Send array of IDs for batch deletion
-        { headers: { authtoken: token } }
+        payload
+        // No headers are needed now
       );
 
+      console.log("Remove response:", response.data);
+
+      // Update the images state
       const updatedImages = images.filter(
         (item) => item.public_id !== public_id
       );
+      console.log("Updated images after removal:", updatedImages);
       setImages(updatedImages);
 
+      // Update thumbnail if necessary
       if (
         selectedThumbnail?.public_id === public_id &&
         updatedImages.length > 0
@@ -134,7 +145,21 @@ const FileUpload = ({ setImages, images, setThumbnail }) => {
         setSelectedThumbnail(null);
       }
     } catch (err) {
-      console.error("Image remove error:", err);
+      // Improved error logging
+      if (err.response) {
+        console.error(
+          "Image remove error:",
+          err.response.data, // Server response error details
+          err.response.status, // Status code
+          err.response.headers // Response headers
+        );
+      } else {
+        console.error(
+          "Image remove error:",
+          err.message // Network or other error
+        );
+      }
+      setError("Error removing image. Please try again.");
     } finally {
       setLoading(false);
     }

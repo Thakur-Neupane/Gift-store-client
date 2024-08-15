@@ -111,7 +111,6 @@ export const ProductTable = () => {
             <th>Qty</th>
             <th>Sales Price</th>
             <th>Color</th>
-            <th>Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -158,11 +157,6 @@ export const ProductTable = () => {
                 ) : null}
               </td>
               <td>{prod.color}</td>
-              <td>
-                <Link to={`/admin/product/edit`}>
-                  <Button variant="warning">Edit</Button>
-                </Link>
-              </td>
             </tr>
           ))}
         </tbody>

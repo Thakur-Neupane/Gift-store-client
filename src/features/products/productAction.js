@@ -46,9 +46,11 @@ export const deleteProductAction = (_id) => async (dispatch) => {
 // Action to get a single product by id
 export const getOneProductAction = (_id) => async (dispatch) => {
   try {
-    const response = await getOneProduct(_id);
+    const response = await getOneProduct(_id); // Use `_id` here
     if (response.status === "success") {
       dispatch(setProduct(response.product));
+    } else {
+      console.error("Error fetching product:", response.message);
     }
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -56,9 +58,9 @@ export const getOneProductAction = (_id) => async (dispatch) => {
 };
 
 // Action to update a product
-export const updateProductAction = (id, productData) => async (dispatch) => {
+export const updateProductAction = (_id, productData) => async (dispatch) => {
   try {
-    const response = await updateProduct(id, productData);
+    const response = await updateProduct(_id, productData);
     if (response.status === "success") {
       dispatch(getProductAction());
     }
